@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SehatTrack Esnesaba - HUD Monitoring</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="scanline"></div>
+
+    <div class="container">
+        <header>
+            <div class="school-info">
+                <div class="logo-placeholder">
+                    <!-- Manual Upload Logo Space -->
+                    <i data-lucide="shield-check" style="color: var(--neon-cyan);"></i>
+                </div>
+                <div>
+                    <div class="school-name">SMP NEGERI 1 BANYUBIRU</div>
+                    <h1>SEHATTRACK</h1>
+                </div>
+            </div>
+            <p class="subtitle" style="color: var(--neon-gold); letter-spacing: 3px; font-weight: bold;">ESNESABA MISSION PROTOCOL</p>
+        </header>
+
+        <!-- Hero Section with Animated Students -->
+        <div class="hero-image-container">
+            <img src="cheerful_osis_students_1778602702130.png" alt="Cheerful Students" class="hero-image">
+            <div class="hero-overlay"></div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <div id="studentTab" class="tab active" onclick="switchView('student')">Siswa Entry</div>
+            <div id="teacherTab" class="tab" onclick="switchView('teacher')">Admin Control</div>
+        </div>
+
+        <!-- Student Section -->
+        <section id="studentView" class="card">
+            <div id="userStats" class="stats-grid" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div class="stat-card">
+                    <span class="stat-label">EXP POINTS</span>
+                    <div id="myScore" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">RANK TITLE</span>
+                    <div id="myBadges" class="badges-container"></div>
+                </div>
+            </div>
+
+            <div id="quoteBox" class="quote-card" style="border-left: 2px solid var(--neon-cyan); padding: 10px; margin-bottom: 20px; font-style: italic; background: rgba(0,242,255,0.05);">
+                <p id="motivationQuote">"Initializing healthy lifestyle protocol..."</p>
+            </div>
+
+            <form id="healthForm">
+                <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label>Identity Code (Name)</label>
+                        <input type="text" id="nama" placeholder="Enter Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Squad Section (Class)</label>
+                        <select id="kelas" required>
+                            <option value="">Select Class</option>
+                            <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
+                            <option value="8A">8A</option><option value="8B">8B</option>
+                            <option value="9A">9A</option><option value="9B">9B</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Mission Tasks</label>
+                    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label style="font-size: 0.7rem;">Breakfast?</label>
+                            <select id="sarapan"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem;">Hydration (8L)?</label>
+                            <select id="airPutih"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem;">Exercise?</label>
+                            <select id="olahraga"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem;">Rest Cycle (8H)?</label>
+                            <select id="tidur"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Nutrition Log (If Breakfast Complete)</label>
+                    <input type="text" id="menuSarapan" placeholder="Log your fuel...">
+                </div>
+
+                <button type="submit" class="primary" id="submitBtn" style="width: 100%;">
+                    UPLOAD MISSION DATA
+                    <div class="loader" id="btnLoader" style="display: none; border: 2px solid #fff; border-top: 2px solid var(--neon-cyan); border-radius: 50%; width: 15px; height: 15px; animation: spin 1s linear infinite; margin-left: 10px;"></div>
+                </button>
+            </form>
+        </section>
+
+        <!-- Teacher Section -->
+        <section id="teacherView" class="card" style="display: none;">
+            <!-- Login Overlay will appear here first -->
+            <div id="teacherContent" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 style="font-family: 'Orbitron'; font-size: 1rem; color: var(--neon-gold);">ADMIN CONTROL PANEL</h2>
+                    <button onclick="fetchTeacherData()" class="primary" style="padding: 5px 15px; font-size: 0.8rem; letter-spacing: 1px;">
+                        REFRESH
+                    </button>
+                </div>
+
+                <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div class="stat-card">
+                        <span class="stat-label">TOTAL RECORDS</span>
+                        <div id="totalRespon" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">ACTIVE AGENTS</span>
+                        <div id="totalSiswa" class="stat-value">0</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="searchStudent" placeholder="Filter by name or squad..." onkeyup="filterData()">
+                </div>
+
+                <div id="teacherTable" style="max-height: 400px; overflow-y: auto; margin-top: 20px; border: 1px solid rgba(0,242,255,0.1);">
+                    <p style="text-align: center; color: var(--neon-cyan);">Awaiting scan...</p>
+                </div>
+            </div>
+
+            <!-- Login UI -->
+            <div id="teacherLogin" style="text-align: center; padding: 40px 0;">
+                <i data-lucide="lock" style="width: 48px; height: 48px; color: var(--neon-gold); margin-bottom: 20px;"></i>
+                <h2 style="font-family: 'Orbitron'; color: var(--neon-gold);">RESTRICTED ACCESS</h2>
+                <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px;">Enter Admin Credentials to access student logs</p>
+                <div class="form-group" style="max-width: 300px; margin: 0 auto 15px auto;">
+                    <input type="text" id="adminUser" placeholder="USERNAME">
+                </div>
+                <div class="form-group" style="max-width: 300px; margin: 0 auto 25px auto;">
+                    <input type="password" id="adminPass" placeholder="PASSWORD">
+                </div>
+                <button onclick="checkAdminLogin()" class="primary" style="width: 200px;">AUTH ACCESS</button>
+            </div>
+        </section>
+
+        <footer>
+            <p class="footnote">PROVIDE APPS BY FENDI AKHMAD, S.Pd</p>
+            <p style="font-size: 0.6rem; opacity: 0.3; margin-top: 5px;">&copy; 2026 SMP NEGERI 1 BANYUBIRU. ALL RIGHTS RESERVED.</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" style="position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: 5px; background: var(--bg-panel); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); display: none; z-index: 2000; box-shadow: var(--border-glow);"></div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
