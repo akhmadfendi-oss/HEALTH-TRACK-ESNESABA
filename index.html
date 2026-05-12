@@ -483,7 +483,7 @@
 
   <script>
     // GANTI URL INI DENGAN URL WEB APP GAS ANDA
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzTZybT_zpXLqHgP-ty_dPUaEnM-H9jORfSEMiABcbszkyssctnI0j86M6ZYzKbDuTSNg/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwgN3Q01sFrdLM8H_L93Q6elJ14UuBrLXO7KlLnolIItcpJFBqOKeTtFj7SWHzsucYU/exec";
 
     function switchView(view) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -509,8 +509,25 @@
       if (document.getElementById('checkTidur').checked) score += 20;
       if (document.getElementById('checkManis').checked) score += 15;
       if (document.getElementById('checkHP').checked) score += 15;
+      
       document.getElementById('scoreVal').innerText = score;
-      return score;
+
+      // Logika Kategori & Badge
+      let kategori = "Perlu Semangat";
+      let badge = "🥉 Bronze";
+      
+      if (score === 100) {
+        kategori = "Siswa Teladan";
+        badge = "🏆 Diamond";
+      } else if (score >= 80) {
+        kategori = "Sangat Sehat";
+        badge = "🥇 Gold";
+      } else if (score >= 60) {
+        kategori = "Cukup Sehat";
+        badge = "🥈 Silver";
+      }
+
+      return { score, kategori, badge };
     }
 
     document.getElementById('missionForm').onsubmit = async (e) => {
@@ -557,6 +574,8 @@
         kurangiManis: document.getElementById('checkManis').checked ? "Ya" : "Tidak",
         batasiHP: document.getElementById('checkHP').checked ? "Ya" : "Tidak",
         skorHarian: score,
+        kategoriSkor: kategori,
+        badgeHarian: badge,
         mood: "😊",
         jurnal: document.getElementById('jurnal').value,
         action: "submit"
@@ -591,10 +610,17 @@
       try {
         const res = await fetch(GAS_URL + "?action=getData");
         const data = await res.json();
+        
+        if (data.length === 0) {
+          container.innerHTML = "<p style='text-align:center; color:var(--neon-gold);'>Belum ada data di sheet MonitoringUtama.</p>";
+          return;
+        }
+
         let html = "<table style='width:100%; border-collapse:collapse; min-width:400px;'>";
         html += "<thead><tr><th style='text-align:left; padding:10px; border-bottom:1px solid #333;'>Nama</th><th style='padding:10px; border-bottom:1px solid #333;'>Skor</th><th style='padding:10px; border-bottom:1px solid #333;'>Tanggal</th></tr></thead><tbody>";
         data.reverse().forEach(row => {
-          html += `<tr><td style='padding:10px; border-bottom:1px solid #222;'>${row.nama}</td><td style='text-align:center; color:var(--neon-cyan);'>${row.skorharian}</td><td style='text-align:center; font-size:0.7rem;'>${row.tanggal}</td></tr>`;
+          const displayScore = row.skor || row.skorharian || 0;
+          html += `<tr><td style='padding:10px; border-bottom:1px solid #222;'>${row.nama || 'Anonim'}</td><td style='text-align:center; color:var(--neon-cyan);'>${displayScore}</td><td style='text-align:center; font-size:0.7rem;'>${row.tanggal || '-'}</td></tr>`;
         });
         html += "</tbody></table>";
         container.innerHTML = html;
