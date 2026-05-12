@@ -27,7 +27,7 @@
                     <h1>SEHATTRACK</h1>
                 </div>
             </div>
-            <p class="subtitle" style="color: var(--neon-gold); letter-spacing: 3px; font-weight: bold;">ESNESABA MISSION PROTOCOL</p>
+            <p class="subtitle" style="color: var(--neon-gold); letter-spacing: 3px; font-weight: bold;">PROTOKOL MISI ESNESABA</p>
         </header>
 
         <!-- Hero Section with Animated Students -->
@@ -39,37 +39,37 @@
 
         <!-- Navigation Tabs -->
         <div class="tabs">
-            <div id="studentTab" class="tab active" onclick="switchView('student')">Siswa Entry</div>
-            <div id="teacherTab" class="tab" onclick="switchView('teacher')">Admin Control</div>
+            <div id="studentTab" class="tab active" onclick="switchView('student')">Entri Siswa</div>
+            <div id="teacherTab" class="tab" onclick="switchView('teacher')">Kontrol Admin</div>
         </div>
 
         <!-- Student Section -->
         <section id="studentView" class="card">
             <div id="userStats" class="stats-grid" style="display: none; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                 <div class="stat-card">
-                    <span class="stat-label">EXP POINTS</span>
+                    <span class="stat-label">POIN KESEHATAN (EXP)</span>
                     <div id="myScore" class="stat-value">0</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-label">RANK TITLE</span>
+                    <span class="stat-label">PERINGKAT</span>
                     <div id="myBadges" class="badges-container"></div>
                 </div>
             </div>
 
             <div id="quoteBox" class="quote-card" style="border-left: 2px solid var(--neon-cyan); padding: 10px; margin-bottom: 20px; font-style: italic; background: rgba(0,242,255,0.05);">
-                <p id="motivationQuote">"Initializing healthy lifestyle protocol..."</p>
+                <p id="motivationQuote">"Menginisiasi protokol gaya hidup sehat..."</p>
             </div>
 
             <form id="healthForm">
                 <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                     <div class="form-group">
-                        <label>Identity Code (Name)</label>
-                        <input type="text" id="nama" placeholder="Enter Full Name" required>
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="nama" placeholder="Masukkan Nama Lengkap" required>
                     </div>
                     <div class="form-group">
-                        <label>Squad Section (Class)</label>
+                        <label>Kelas / Regu</label>
                         <select id="kelas" required>
-                            <option value="">Select Class</option>
+                            <option value="">Pilih Kelas</option>
                             <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
                             <option value="8A">8A</option><option value="8B">8B</option>
                             <option value="9A">9A</option><option value="9B">9B</option>
@@ -78,34 +78,34 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <label>Mission Tasks</label>
+                    <label>Tugas Misi</label>
                     <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div>
-                            <label style="font-size: 0.7rem;">Breakfast?</label>
-                            <select id="sarapan"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                            <label style="font-size: 0.7rem;">Sarapan?</label>
+                            <select id="sarapan"><option value="Ya">SELESAI</option><option value="Tidak">GAGAL</option></select>
                         </div>
                         <div>
-                            <label style="font-size: 0.7rem;">Hydration (8L)?</label>
-                            <select id="airPutih"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                            <label style="font-size: 0.7rem;">Minum (8 Gelas)?</label>
+                            <select id="airPutih"><option value="Ya">SELESAI</option><option value="Tidak">GAGAL</option></select>
                         </div>
                         <div>
-                            <label style="font-size: 0.7rem;">Exercise?</label>
-                            <select id="olahraga"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                            <label style="font-size: 0.7rem;">Olahraga?</label>
+                            <select id="olahraga"><option value="Ya">SELESAI</option><option value="Tidak">GAGAL</option></select>
                         </div>
                         <div>
-                            <label style="font-size: 0.7rem;">Rest Cycle (8H)?</label>
-                            <select id="tidur"><option value="Ya">COMPLETE</option><option value="Tidak">FAILED</option></select>
+                            <label style="font-size: 0.7rem;">Tidur (8 Jam)?</label>
+                            <select id="tidur"><option value="Ya">SELESAI</option><option value="Tidak">GAGAL</option></select>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label>Nutrition Log (If Breakfast Complete)</label>
-                    <input type="text" id="menuSarapan" placeholder="Log your fuel...">
+                    <label>Log Nutrisi (Jika Sarapan Selesai)</label>
+                    <input type="text" id="menuSarapan" placeholder="Catat makanan Anda...">
                 </div>
 
                 <button type="submit" class="primary" id="submitBtn" style="width: 100%;">
-                    UPLOAD MISSION DATA
+                    UNGGAH DATA MISI
                     <div class="loader" id="btnLoader" style="display: none; border: 2px solid #fff; border-top: 2px solid var(--neon-cyan); border-radius: 50%; width: 15px; height: 15px; animation: spin 1s linear infinite; margin-left: 10px;"></div>
                 </button>
             </form>
@@ -116,54 +116,54 @@
             <!-- Login Overlay will appear here first -->
             <div id="teacherContent" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h2 style="font-family: 'Orbitron'; font-size: 1rem; color: var(--neon-gold);">ADMIN CONTROL PANEL</h2>
+                    <h2 style="font-family: 'Orbitron'; font-size: 1rem; color: var(--neon-gold);">PANEL KONTROL ADMIN</h2>
                     <button onclick="fetchTeacherData()" class="primary" style="padding: 5px 15px; font-size: 0.8rem; letter-spacing: 1px;">
-                        REFRESH
+                        SEGARKAN
                     </button>
                 </div>
 
                 <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                     <div class="stat-card">
-                        <span class="stat-label">TOTAL RECORDS</span>
+                        <span class="stat-label">TOTAL CATATAN</span>
                         <div id="totalRespon" class="stat-value">0</div>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-label">ACTIVE AGENTS</span>
+                        <span class="stat-label">AGEN AKTIF (SISWA)</span>
                         <div id="totalSiswa" class="stat-value">0</div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <input type="text" id="searchStudent" placeholder="Filter by name or squad..." onkeyup="filterData()">
+                    <input type="text" id="searchStudent" placeholder="Filter berdasarkan nama atau regu..." onkeyup="filterData()">
                 </div>
 
                 <div id="teacherTable" style="max-height: 400px; overflow-y: auto; margin-top: 20px; border: 1px solid rgba(0,242,255,0.1);">
-                    <p style="text-align: center; color: var(--neon-cyan);">Awaiting scan...</p>
+                    <p style="text-align: center; color: var(--neon-cyan);">Menunggu pemindaian...</p>
                 </div>
             </div>
 
             <!-- Login UI -->
             <div id="teacherLogin" style="text-align: center; padding: 40px 0;">
                 <i data-lucide="lock" style="width: 48px; height: 48px; color: var(--neon-gold); margin-bottom: 20px;"></i>
-                <h2 style="font-family: 'Orbitron'; color: var(--neon-gold); letter-spacing: 2px;">RESTRICTED ACCESS</h2>
+                <h2 style="font-family: 'Orbitron'; color: var(--neon-gold); letter-spacing: 2px;">AKSES TERBATAS</h2>
                 <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 25px;">Masukkan Kredensial Admin untuk mengakses log siswa</p>
                 <div class="form-group" style="max-width: 320px; margin: 0 auto 15px auto;">
-                    <label style="text-align: left;">USERNAME</label>
+                    <label style="text-align: left;">NAMA PENGGUNA</label>
                     <input type="text" id="adminUser" placeholder="Contoh: MAS FENDI" autocomplete="off">
                 </div>
                 <div class="form-group" style="max-width: 320px; margin: 0 auto 25px auto;">
-                    <label style="text-align: left;">PASSWORD</label>
+                    <label style="text-align: left;">KATA SANDI</label>
                     <input type="password" id="adminPass" placeholder="******">
                 </div>
                 <button onclick="checkAdminLogin()" class="primary" style="width: 220px; box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);">
-                    AUTH ACCESS
+                    VERIFIKASI AKSES
                 </button>
             </div>
         </section>
 
         <footer>
-            <p class="footnote">PROVIDE APPS BY FENDI AKHMAD, S.Pd</p>
-            <p style="font-size: 0.6rem; opacity: 0.3; margin-top: 5px;">&copy; 2026 SMP NEGERI 1 BANYUBIRU. ALL RIGHTS RESERVED.</p>
+            <p class="footnote">APLIKASI OLEH FENDI AKHMAD, S.Pd</p>
+            <p style="font-size: 0.6rem; opacity: 0.3; margin-top: 5px;">&copy; 2026 SMP NEGERI 1 BANYUBIRU. HAK CIPTA DILINDUNGI.</p>
         </footer>
     </div>
 

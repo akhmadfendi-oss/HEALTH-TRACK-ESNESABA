@@ -85,7 +85,7 @@ function checkAdminLogin() {
         showToast('AKSES DITERIMA. Selamat datang, Admin.', 'success');
         fetchTeacherData();
     } else {
-        showToast('AKSES DITOLAK. Username atau Password salah.', 'error');
+        showToast('AKSES DITOLAK. Nama Pengguna atau Kata Sandi salah.', 'error');
     }
 }
 
@@ -138,7 +138,7 @@ document.getElementById('healthForm').addEventListener('submit', async (e) => {
         showStats();
     } catch (error) {
         console.error('Error:', error);
-        showToast('UNGGAH GAGAL. Periksa koneksi.', 'error');
+        showToast('UNGGAH GAGAL. Periksa koneksi internet.', 'error');
     } finally {
         submitBtn.disabled = false;
         loader.style.display = 'none';
@@ -198,9 +198,9 @@ function renderTeacherTable(data) {
         <table style="width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.3); font-size: 0.9rem;">
             <thead style="background: rgba(0, 242, 255, 0.1);">
                 <tr>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,242,255,0.3); color: #00f2ff;">AGENT NAME</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,242,255,0.3); color: #00f2ff;">SQUAD</th>
-                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(0,242,255,0.3); color: #ffcc00;">EXP</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,242,255,0.3); color: #00f2ff;">NAMA AGEN</th>
+                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,242,255,0.3); color: #00f2ff;">REGU/KELAS</th>
+                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(0,242,255,0.3); color: #ffcc00;">POIN (EXP)</th>
                 </tr>
             </thead>
             <tbody>
