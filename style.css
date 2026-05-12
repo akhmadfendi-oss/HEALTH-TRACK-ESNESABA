@@ -161,6 +161,7 @@ h1 {
   clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 95% 100%, 0% 100%);
   margin-bottom: 25px;
   backdrop-filter: blur(10px);
+  animation: floating 8s infinite ease-in-out;
 }
 
 .card::before {

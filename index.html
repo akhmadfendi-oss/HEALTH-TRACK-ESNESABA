@@ -18,9 +18,9 @@
     <div class="container">
         <header>
             <div class="school-info">
-                <div class="logo-placeholder">
-                    <!-- Manual Upload Logo Space -->
-                    <i data-lucide="shield-check" style="color: var(--neon-cyan);"></i>
+                <div class="logo-container">
+                    <!-- Silakan simpan file logo Anda dengan nama logo.png di folder yang sama -->
+                    <img src="logo.png" alt="Logo" class="school-logo" onerror="this.src='https://via.placeholder.com/60?text=LOGO'">
                 </div>
                 <div>
                     <div class="school-name">SMP NEGERI 1 BANYUBIRU</div>
@@ -32,7 +32,8 @@
 
         <!-- Hero Section with Animated Students -->
         <div class="hero-image-container">
-            <img src="cheerful_osis_students_1778602702130.png" alt="Cheerful Students" class="hero-image">
+            <!-- Jika gambar tidak muncul, pastikan file students.png ada di folder -->
+            <img src="students.png" alt="Cheerful Students" class="hero-image" onerror="this.src='https://via.placeholder.com/800x400/0a0e14/00f2ff?text=Siswa+SMP+Esnesaba'">
             <div class="hero-overlay"></div>
         </div>
 
@@ -144,15 +145,19 @@
             <!-- Login UI -->
             <div id="teacherLogin" style="text-align: center; padding: 40px 0;">
                 <i data-lucide="lock" style="width: 48px; height: 48px; color: var(--neon-gold); margin-bottom: 20px;"></i>
-                <h2 style="font-family: 'Orbitron'; color: var(--neon-gold);">RESTRICTED ACCESS</h2>
-                <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px;">Enter Admin Credentials to access student logs</p>
-                <div class="form-group" style="max-width: 300px; margin: 0 auto 15px auto;">
-                    <input type="text" id="adminUser" placeholder="USERNAME">
+                <h2 style="font-family: 'Orbitron'; color: var(--neon-gold); letter-spacing: 2px;">RESTRICTED ACCESS</h2>
+                <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 25px;">Masukkan Kredensial Admin untuk mengakses log siswa</p>
+                <div class="form-group" style="max-width: 320px; margin: 0 auto 15px auto;">
+                    <label style="text-align: left;">USERNAME</label>
+                    <input type="text" id="adminUser" placeholder="Contoh: MAS FENDI" autocomplete="off">
                 </div>
-                <div class="form-group" style="max-width: 300px; margin: 0 auto 25px auto;">
-                    <input type="password" id="adminPass" placeholder="PASSWORD">
+                <div class="form-group" style="max-width: 320px; margin: 0 auto 25px auto;">
+                    <label style="text-align: left;">PASSWORD</label>
+                    <input type="password" id="adminPass" placeholder="******">
                 </div>
-                <button onclick="checkAdminLogin()" class="primary" style="width: 200px;">AUTH ACCESS</button>
+                <button onclick="checkAdminLogin()" class="primary" style="width: 220px; box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);">
+                    AUTH ACCESS
+                </button>
             </div>
         </section>
 
