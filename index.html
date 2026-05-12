@@ -1,1147 +1,610 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SehatTrack Esnesaba - SMPN 1 Banyubiru</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;600;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root {
-            --neon-cyan: #00f2ff;
-            --neon-gold: #ffcc00;
-            --neon-magenta: #ff00ff;
-            --bg-dark: #06090f;
-            --bg-panel: rgba(10, 20, 35, 0.85);
-            --border-glow: 0 0 15px rgba(0, 242, 255, 0.4);
-            --hud-border: 1px solid rgba(0, 242, 255, 0.3);
-            --text-light: #e0e6ed;
-            --text-dim: rgba(224, 230, 237, 0.6);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Rajdhani', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            padding-bottom: 50px;
-        }
-
-        /* Grid Background Effect */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -1;
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, var(--bg-dark) 85%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header Section */
-        header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            padding-top: 10px;
-        }
-
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 5px var(--neon-cyan));
-        }
-
-        .header-titles h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            color: var(--neon-gold);
-            letter-spacing: 1px;
-            margin-bottom: -5px;
-        }
-
-        .header-titles h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            color: var(--neon-cyan);
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.6);
-            letter-spacing: 2px;
-        }
-
-        .misi-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            color: var(--neon-magenta);
-            letter-spacing: 3px;
-            margin-top: 5px;
-            font-weight: bold;
-        }
-
-        /* Progress Bar */
-        .progress-section {
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 242, 255, 0.1);
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .progress-track {
-            height: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 5px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 242, 255, 0.2);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
-            box-shadow: 0 0 10px var(--neon-cyan);
-            width: 0%;
-            transition: width 1s ease-in-out;
-        }
-
-        /* Hero Area */
-        .hero-container {
-            width: 100%;
-            height: 180px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 25px;
-            border: var(--hud-border);
-            position: relative;
-            box-shadow: var(--border-glow);
-        }
-
-        .hero-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .hero-fallback {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 20px;
-        }
-
-        .hero-fallback h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            color: var(--neon-cyan);
-            text-shadow: 0 0 10px var(--neon-cyan);
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            background: rgba(0, 242, 255, 0.05);
-            border: 1px solid rgba(0, 242, 255, 0.2);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-            color: var(--text-dim);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-        }
-
-        .tab.active {
-            background: rgba(0, 242, 255, 0.15);
-            border-color: var(--neon-cyan);
-            color: var(--neon-cyan);
-            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.3);
-        }
-
-        /* Panel Cards */
-        .card {
-            background: var(--bg-panel);
-            border: var(--hud-border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            position: relative;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        h3.section-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            color: var(--neon-gold);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-transform: uppercase;
-        }
-
-        /* Form Controls */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--neon-gold);
-            margin-bottom: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 242, 255, 0.2);
-            border-radius: 10px;
-            color: white;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem; /* 16px for mobile accessibility */
-            transition: 0.3s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--neon-cyan);
-            background: rgba(0, 242, 255, 0.05);
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-        }
-
-        /* Mission Small Cards */
-        .mission-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .mission-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            transition: 0.3s;
-        }
-
-        .mission-card.active {
-            border-color: var(--neon-cyan);
-            background: rgba(0, 242, 255, 0.05);
-        }
-
-        .mission-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .mission-icon {
-            font-size: 1.5rem;
-        }
-
-        .mission-title-text {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .mission-toggle {
-            margin-left: auto;
-            transform: scale(1.5);
-            cursor: pointer;
-        }
-
-        .mission-detail {
-            display: none;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dotted rgba(255, 255, 255, 0.1);
-        }
-
-        /* Score Preview */
-        .score-preview {
-            text-align: center;
-            padding: 20px;
-            background: rgba(0, 242, 255, 0.1);
-            border: 1px dashed var(--neon-cyan);
-            border-radius: 12px;
-            margin-top: 30px;
-        }
-
-        .score-val {
-            display: block;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            color: var(--neon-cyan);
-            text-shadow: 0 0 15px var(--neon-cyan);
-        }
-
-        /* Button Primary */
-        button.btn-primary {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            cursor: pointer;
-            margin-top: 25px;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        button.btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 242, 255, 0.5);
-        }
-
-        button.btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Admin Login Overlay */
-        .admin-lock {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        /* Mood Selector */
-        .mood-selector {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .mood-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px 5px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 1.5rem;
-        }
-
-        .mood-item.selected {
-            border-color: var(--neon-cyan);
-            background: rgba(0, 242, 255, 0.15);
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-        }
-
-        /* Result Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .modal-card {
-            width: 100%;
-            max-width: 450px;
-            background: var(--bg-panel);
-            border: 2px solid var(--neon-cyan);
-            border-radius: 24px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 0 30px var(--neon-cyan);
-            animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .badge-img {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-            display: block;
-            filter: drop-shadow(0 0 10px var(--neon-gold));
-        }
-
-        .result-score {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            color: var(--neon-cyan);
-            margin: 10px 0;
-        }
-
-        .result-badge-name {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--neon-gold);
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-
-        .quote-box {
-            font-style: italic;
-            color: var(--text-dim);
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            line-height: 1.5;
-        }
-
-        /* Admin Dashboard */
-        .admin-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .stat-val {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            color: var(--neon-cyan);
-        }
-
-        .admin-table-container {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: rgba(0, 242, 255, 0.1);
-            padding: 12px;
-            text-align: left;
-            font-size: 0.8rem;
-            color: var(--neon-gold);
-            position: sticky;
-            top: 0;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.85rem;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.7rem;
-            opacity: 0.5;
-            letter-spacing: 1px;
-        }
-
-        /* Loading Spinner */
-        .loader {
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 25px;
-            background: #1e293b;
-            border: 1px solid var(--neon-cyan);
-            border-radius: 50px;
-            z-index: 3000;
-            display: none;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { bottom: -50px; opacity: 0; }
-            to { bottom: 30px; opacity: 1; }
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .container { padding: 15px; }
-            header { gap: 10px; }
-            .header-titles h1 { font-size: 1.2rem; }
-            .card { padding: 20px; }
-            .mood-selector { gap: 5px; }
-            .mood-item { font-size: 1.2rem; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SehatTrack Esnesaba - HUD Monitoring V2</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --neon-cyan: #00f2ff;
+      --neon-gold: #ffcc00;
+      --neon-magenta: #ff00ff;
+      --bg-dark: #06090f;
+      --bg-panel: rgba(10, 20, 35, 0.9);
+      --hud-border: 1px solid rgba(0, 242, 255, 0.3);
+      --text-light: #e0e6ed;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 50px;
+    }
+
+    /* Grid Background Effect */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-top: 10px;
+    }
+
+    .header-titles h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      color: var(--neon-gold);
+      letter-spacing: 2px;
+    }
+
+    .header-titles h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px rgba(0, 242, 255, 0.6);
+    }
+
+    .misi-title {
+      color: var(--neon-magenta);
+      font-weight: bold;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      margin-top: 5px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      background: rgba(0, 242, 255, 0.05);
+      border: 1px solid rgba(0, 242, 255, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      transition: 0.3s;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .tab.active {
+      background: rgba(0, 242, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: var(--hud-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--neon-gold);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 242, 255, 0.2);
+      border-radius: 10px;
+      color: white;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+    }
+
+    .mission-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+      transition: 0.3s;
+    }
+
+    .mission-card.active {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 242, 255, 0.05);
+    }
+
+    .mission-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mission-toggle {
+      margin-left: auto;
+      transform: scale(1.5);
+      cursor: pointer;
+    }
+
+    .mission-detail {
+      display: none;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px dotted rgba(255, 255, 255, 0.1);
+    }
+
+    .score-preview {
+      text-align: center;
+      padding: 20px;
+      border: 1px dashed var(--neon-cyan);
+      border-radius: 12px;
+      margin-top: 20px;
+      background: rgba(0, 242, 255, 0.05);
+    }
+
+    .score-val {
+      display: block;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      color: var(--neon-cyan);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.7rem;
+      opacity: 0.5;
+    }
+
+    /* Loader */
+    .loader {
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    #adminContent {
+      display: none;
+    }
+
+    #adminLogin {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    /* Mission Consent Styles */
+    .mission-consent {
+      margin-top: 24px;
+      padding: 18px;
+      border: 1px solid rgba(0, 255, 255, 0.45);
+      border-radius: 18px;
+      background: rgba(0, 255, 255, 0.06);
+      box-shadow: 0 0 18px rgba(0, 255, 255, 0.12);
+    }
+
+    .mission-consent h3 {
+      margin: 0 0 10px;
+      color: #00f5ff;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+    }
+
+    .mission-consent p {
+      color: #d8faff;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .consent-check {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 14px;
+      color: #ffd84d;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .consent-check input {
+      width: 20px;
+      height: 20px;
+      accent-color: #00f5ff;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
 
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <img src="assets/logo-smpn1-banyubiru.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50?text=LOGO'">
-            <div class="header-titles">
-                <h2>SMP NEGERI 1 BANYUBIRU</h2>
-                <h1>SEHATTRACK</h1>
-                <div class="misi-title">MISI 30 HARI HIDUP SEHAT</div>
-            </div>
-        </header>
+  <div class="container">
+    <header>
+      <div class="header-titles">
+        <h2>SMP NEGERI 1 BANYUBIRU</h2>
+        <h1>SEHATTRACK</h1>
+        <div class="misi-title">MISI 30 HARI HIDUP SEHAT</div>
+      </div>
+    </header>
 
-        <!-- Progress Bar -->
-        <div class="progress-section">
-            <div class="progress-info">
-                <span>PROGRESS PROGRAM</span>
-                <span id="hariTeks">Hari ke-0 dari 30</span>
-            </div>
-            <div class="progress-track">
-                <div id="progressBar" class="progress-fill"></div>
-            </div>
-        </div>
-
-        <!-- Hero Area -->
-        <div class="hero-container">
-            <img src="assets/siswa-sehattrack.png" alt="Hero" class="hero-img" id="heroImg" onerror="showHeroFallback()">
-            <div id="heroFallback" class="hero-fallback" style="display: none;">
-                <h3>30 Hari Membangun Kebiasaan Hidup Sehat</h3>
-            </div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <div class="tabs">
-            <div id="studentTab" class="tab active" onclick="switchView('student')">Entri Siswa</div>
-            <div id="teacherTab" class="tab" onclick="switchView('teacher')">Kontrol Admin</div>
-        </div>
-
-        <!-- View: Student -->
-        <section id="studentView">
-            <form id="missionForm">
-                <!-- Data Identitas -->
-                <div class="card">
-                    <h3 class="section-title"><i data-lucide="user"></i> Identitas Agen</h3>
-                    <div class="form-group">
-                        <label>ID SISWA</label>
-                        <input type="text" id="idSiswa" placeholder="Contoh: 1234" required>
-                    </div>
-                    <div class="form-group">
-                        <label>NAMA LENGKAP</label>
-                        <input type="text" id="nama" placeholder="Sesuai Absen" required>
-                    </div>
-                    <div class="form-group">
-                        <label>KELAS / REGU</label>
-                        <select id="kelas" required>
-                            <option value="">Pilih Kelas</option>
-                            <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
-                            <option value="8A">8A</option><option value="8B">8B</option>
-                            <option value="9A">9A</option><option value="9B">9B</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Misi-Misi (Checklist Section) -->
-                <div class="card">
-                    <h3 class="section-title"><i data-lucide="check-circle"></i> Misi Hari Ini</h3>
-                    
-                    <div class="mission-grid">
-                        <!-- Sarapan -->
-                        <div class="mission-card" id="cardSarapan">
-                            <div class="mission-header">
-                                <span class="mission-icon">🍌</span>
-                                <span class="mission-title-text">Misi Sarapan</span>
-                                <input type="checkbox" id="checkSarapan" class="mission-toggle" onchange="toggleDetail('Sarapan')">
-                            </div>
-                            <div class="mission-detail" id="detailSarapan">
-                                <label>Apa menu sarapanmu?</label>
-                                <input type="text" id="menuSarapan" placeholder="Misal: Nasi, Telur, Buah">
-                            </div>
-                        </div>
-
-                        <!-- Air Putih -->
-                        <div class="mission-card" id="cardAir">
-                            <div class="mission-header">
-                                <span class="mission-icon">💧</span>
-                                <span class="mission-title-text">Misi Air Putih</span>
-                                <input type="checkbox" id="checkAir" class="mission-toggle" onchange="toggleDetail('Air')">
-                            </div>
-                            <div class="mission-detail" id="detailAir">
-                                <label>Jumlah air (dalam Gelas)</label>
-                                <input type="number" id="jumlahAir" placeholder="Contoh: 8">
-                            </div>
-                        </div>
-
-                        <!-- Gerak Aktif -->
-                        <div class="mission-card" id="cardOlahraga">
-                            <div class="mission-header">
-                                <span class="mission-icon">🏃</span>
-                                <span class="mission-title-text">Misi Gerak Aktif</span>
-                                <input type="checkbox" id="checkOlahraga" class="mission-toggle" onchange="toggleDetail('Olahraga')">
-                            </div>
-                            <div class="mission-detail" id="detailOlahraga">
-                                <label>Jenis Olahraga / Aktivitas</label>
-                                <input type="text" id="jenisOlahraga" placeholder="Misal: Lari, Senam, Sepeda">
-                                <label style="margin-top: 10px;">Durasi (Menit)</label>
-                                <input type="number" id="durasiOlahraga" placeholder="Misal: 30">
-                            </div>
-                        </div>
-
-                        <!-- Tidur Cukup -->
-                        <div class="mission-card" id="cardTidur">
-                            <div class="mission-header">
-                                <span class="mission-icon">🌙</span>
-                                <span class="mission-title-text">Misi Tidur Cukup</span>
-                                <input type="checkbox" id="checkTidur" class="mission-toggle" onchange="toggleDetail('Tidur')">
-                            </div>
-                            <div class="mission-detail" id="detailTidur">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                    <div>
-                                        <label>Jam Tidur</label>
-                                        <input type="time" id="jamTidur">
-                                    </div>
-                                    <div>
-                                        <label>Jam Bangun</label>
-                                        <input type="time" id="jamBangun">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Kurangi Manis -->
-                        <div class="mission-card" id="cardManis">
-                            <div class="mission-header">
-                                <span class="mission-icon">🍊</span>
-                                <span class="mission-title-text">Misi Kurangi Manis</span>
-                                <input type="checkbox" id="checkManis" class="mission-toggle" onchange="toggleDetail('Manis')">
-                            </div>
-                            <div class="mission-detail" id="detailManis">
-                                <label>Minuman apa yang dikonsumsi?</label>
-                                <input type="text" id="minumanManis" placeholder="Misal: Teh, Susu, Jus">
-                            </div>
-                        </div>
-
-                        <!-- Batasi HP -->
-                        <div class="mission-card" id="cardHP">
-                            <div class="mission-header">
-                                <span class="mission-icon">📵</span>
-                                <span class="mission-title-text">Misi Batasi HP Malam</span>
-                                <input type="checkbox" id="checkHP" class="mission-toggle" onchange="toggleDetail('HP')">
-                            </div>
-                            <div class="mission-detail" id="detailHP">
-                                <label>Durasi pakai HP malam (Jam)</label>
-                                <input type="number" id="durasiHP" placeholder="Misal: 1">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Jurnal & Mood -->
-                <div class="card">
-                    <h3 class="section-title"><i data-lucide="heart"></i> Refleksi Misi</h3>
-                    
-                    <div class="form-group">
-                        <label>MOOD HARI INI</label>
-                        <div class="mood-selector" id="moodSelector">
-                            <div class="mood-item" onclick="selectMood('😁', this)">😁</div>
-                            <div class="mood-item" onclick="selectMood('😊', this)">😊</div>
-                            <div class="mood-item" onclick="selectMood('😐', this)">😐</div>
-                            <div class="mood-item" onclick="selectMood('😔', this)">😔</div>
-                            <div class="mood-item" onclick="selectMood('😫', this)">😫</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>JURNAL / KENDALA (MIN 10 KARAKTER)</label>
-                        <textarea id="jurnal" rows="3" placeholder="Apa yang kamu rasakan hari ini?"></textarea>
-                    </div>
-                </div>
-
-                <!-- Score Preview -->
-                <div class="score-preview">
-                    <span style="font-size: 0.8rem; letter-spacing: 1px;">PREVIEW SKOR MISI</span>
-                    <span id="scoreVal" class="score-val">0</span>
-                    <span id="kategoriTeks" style="font-weight: bold; color: var(--neon-gold);">Ayo Mulai Misi!</span>
-                </div>
-
-                <button type="submit" class="btn-primary" id="btnSubmit">
-                    <span>SIMPAN MISI HARI INI</span>
-                    <div class="loader" id="submitLoader" style="display: none;"></div>
-                </button>
-            </form>
-        </section>
-
-        <!-- View: Admin -->
-        <section id="adminView" style="display: none;">
-            <!-- Login Overlay -->
-            <div id="adminLogin" class="card admin-lock">
-                <i data-lucide="lock" style="width: 48px; height: 48px; color: var(--neon-gold); margin-bottom: 15px;"></i>
-                <h3 style="margin-bottom: 20px;">AKSES TERBATAS GURU</h3>
-                <input type="text" id="adminCode" placeholder="Masukkan Kode Admin" style="max-width: 300px; text-align: center; margin-bottom: 20px;">
-                <button onclick="loginAdmin()" class="btn-primary" style="max-width: 200px; margin-top: 0;">BUKA PANEL</button>
-            </div>
-
-            <!-- Dashboard Admin -->
-            <div id="adminContent" style="display: none;">
-                <div class="card">
-                    <h3 class="section-title"><i data-lucide="layout"></i> Ringkasan Data</h3>
-                    <div class="admin-stats">
-                        <div class="stat-box">
-                            <span style="font-size: 0.7rem; display: block;">TOTAL DATA</span>
-                            <span id="statTotal" class="stat-val">0</span>
-                        </div>
-                        <div class="stat-box">
-                            <span style="font-size: 0.7rem; display: block;">RATA-RATA SKOR</span>
-                            <span id="statRata" class="stat-val">0</span>
-                        </div>
-                    </div>
-                    <button onclick="refreshData()" class="btn-primary" style="padding: 10px; margin-top: 0; font-size: 0.8rem;">REFRESH DATA</button>
-                </div>
-
-                <div class="card">
-                    <h3 class="section-title"><i data-lucide="list"></i> Pengisian Terbaru</h3>
-                    <div class="admin-table-container">
-                        <table id="adminTable">
-                            <thead>
-                                <tr>
-                                    <th>Nama</th>
-                                    <th>Kelas</th>
-                                    <th>Skor</th>
-                                    <th>Waktu</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 15px; font-style: italic;">* Data ini bersifat rahasia dan hanya untuk keperluan pemantauan guru.</p>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <p>PROVIDE APPS BY FENDI AKHMAD, S.Pd</p>
-            <p>&copy; 2026 SMP NEGERI 1 BANYUBIRU</p>
-        </footer>
+    <div class="tabs">
+      <div id="studentTab" class="tab active" onclick="switchView('student')">Entri Siswa</div>
+      <div id="teacherTab" class="tab" onclick="switchView('teacher')">Kontrol Guru</div>
     </div>
 
-    <!-- Result Modal -->
-    <div id="resultModal" class="modal-overlay">
-        <div class="modal-card">
-            <h2 id="modalStatus" style="color: var(--neon-cyan); margin-bottom: 15px;">MISI TERUNGGAH!</h2>
-            <img id="badgeImg" src="" alt="Badge" class="badge-img">
-            <div id="resultBadge" class="result-badge-name">SUPER SEHAT</div>
-            <div class="result-score" id="finalScore">0</div>
-            <p id="resultKategori" style="font-weight: bold; font-size: 1.1rem; color: var(--text-light);"></p>
-            
-            <div class="quote-box" id="modalQuote">
-                "Kesehatan adalah investasi terbaik untuk masa depanmu."
-            </div>
-
-            <button onclick="closeModal()" class="btn-primary" style="margin-top: 0;">KEMBALI KE BERANDA</button>
+    <!-- Section Siswa -->
+    <section id="studentView">
+      <form id="missionForm">
+        <div class="card">
+          <label>ID SISWA (ABSEN)</label>
+          <input type="text" id="idSiswa" placeholder="Contoh: 8A-01" required>
+          <label style="margin-top: 15px;">NAMA LENGKAP</label>
+          <input type="text" id="nama" placeholder="Nama Sesuai Absen" required>
+          <label style="margin-top: 15px;">KELAS / REGU</label>
+          <select id="kelas" required>
+            <option value="">Pilih Kelas</option>
+            <option value="7A">7A</option>
+            <option value="7B">7B</option>
+            <option value="7C">7C</option>
+            <option value="7D">7D</option>
+            <option value="7E">7E</option>
+            <option value="7F">7F</option>
+            <option value="7G">7G</option>
+            <option value="8A">8A</option>
+            <option value="8B">8B</option>
+            <option value="9A">9A</option>
+            <option value="9B">9B</option>
+          </select>
         </div>
-    </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">Notifikasi</div>
+        <div class="card">
+          <h3 style="color:var(--neon-gold); font-size:0.9rem; margin-bottom:15px; font-family:'Orbitron';">MISI HARIAN
+          </h3>
 
-    <script>
-        // --- KONFIGURASI ---
-        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfjBXBlmNw_HZyJG0PACpnMltwWKalHTSDuuWHGDGg_-3AJvu2wFx5nfyMAdPUjpDogA/exec";
-        const PROGRAM_START_DATE = "2026-05-01"; // Format: YYYY-MM-DD
-        const ADMIN_CODE = "BANYUBIRU-SEHAT-2026";
+          <!-- Sarapan -->
+          <div class="mission-card" id="cardSarapan">
+            <div class="mission-header">
+              <span>[🍌] Misi Sarapan (15 Poin)</span>
+              <input type="checkbox" id="checkSarapan" class="mission-toggle" onchange="toggleMisi('Sarapan')">
+            </div>
+            <div class="mission-detail" id="detailSarapan">
+              <label>Menu Sarapan</label>
+              <input type="text" id="menuSarapan" placeholder="Makan apa tadi?">
+            </div>
+          </div>
 
-        const QUOTES = [
-            "Kesehatan adalah kekayaan yang paling berharga.",
-            "Olahraga adalah obat tanpa efek samping bagi tubuhmu.",
-            "Apa yang kamu makan hari ini menentukan siapa kamu besok.",
-            "Tidur yang cukup adalah investasi terbaik untuk otakmu.",
-            "Air putih adalah bahan bakar murni bagi organ tubuhmu.",
-            "Disiplin melakukan hal kecil akan membuahkan hasil besar.",
-            "Satu langkah kecil hari ini menuju hidup sehat selamanya.",
-            "Jangan biarkan stres menguasai harimu, bernapaslah.",
-            "Tubuhmu adalah rumahmu, jagalah agar tetap bersih dan kuat.",
-            "Makanlah untuk hidup, jangan hidup untuk makan.",
-            "Kesehatan mental sama pentingnya dengan kesehatan fisik.",
-            "Pagi yang sehat dimulai dengan sarapan yang bernutrisi.",
-            "Minum cukup air adalah kunci konsentrasi belajar.",
-            "Gerakkan tubuhmu, biarkan energi positif mengalir.",
-            "30 hari adalah waktu yang cukup untuk membentuk kebiasaan baru.",
-            "Pejuang sehat tidak pernah menyerah pada rasa malas.",
-            "Hidup sehat bukan tentang sempurna, tapi tentang kemajuan.",
-            "Istirahatkan matamu dari layar gadget sejenak.",
-            "Jadilah inspirasi bagi teman-temanmu dengan hidup sehat.",
-            "Bangga menjadi siswa SMPN 1 Banyubiru yang bugar!",
-            "Kekuatan fisik membangun ketahanan mental.",
-            "Setiap tetes air putih adalah hadiah bagi ginjalmu.",
-            "Tidur awal, bangun segar, belajar pun lancar.",
-            "Ganti cemilan manismu dengan buah yang segar.",
-            "Udara pagi Banyubiru sangat baik untuk paru-parumu.",
-            "Kurangi duduk, lebih banyak bergerak hari ini.",
-            "Kesehatanmu adalah tanggung jawabmu sendiri.",
-            "Masa depan cerah dimulai dari badan yang sehat.",
-            "Jangan bandingkan dirimu dengan orang lain, bandingkan dengan dirimu kemarin.",
-            "Terima kasih tubuhku karena telah kuat menemaniku hari ini."
-        ];
+          <!-- Air Putih -->
+          <div class="mission-card" id="cardAir">
+            <div class="mission-header">
+              <span>[💧] Misi Air Putih (15 Poin)</span>
+              <input type="checkbox" id="checkAir" class="mission-toggle" onchange="toggleMisi('Air')">
+            </div>
+            <div class="mission-detail" id="detailAir">
+              <label>Jumlah Gelas (Min 8)</label>
+              <input type="number" id="jumlahAir" placeholder="Contoh: 8">
+            </div>
+          </div>
 
-        // --- STATE MANAGEMENT ---
-        let selectedMood = "";
-        let currentScore = 0;
-        let isAdminLoggedIn = false;
+          <!-- Olahraga -->
+          <div class="mission-card" id="cardOlahraga">
+            <div class="mission-header">
+              <span>[🏃] Misi Gerak Aktif (20 Poin)</span>
+              <input type="checkbox" id="checkOlahraga" class="mission-toggle" onchange="toggleMisi('Olahraga')">
+            </div>
+            <div class="mission-detail" id="detailOlahraga">
+              <label>Jenis & Durasi (Menit)</label>
+              <input type="text" id="jenisOlahraga" placeholder="Misal: Lari 30 Menit">
+            </div>
+          </div>
 
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            updateProgress();
-            
-            // Event listeners for score calculation
-            const inputs = document.querySelectorAll('.mission-toggle, input[type="number"], select');
-            inputs.forEach(input => {
-                input.addEventListener('change', calculateScore);
-            });
+          <!-- Tidur -->
+          <div class="mission-card" id="cardTidur">
+            <div class="mission-header">
+              <span>[🌙] Misi Tidur Cukup (20 Poin)</span>
+              <input type="checkbox" id="checkTidur" class="mission-toggle" onchange="toggleMisi('Tidur')">
+            </div>
+            <div class="mission-detail" id="detailTidur">
+              <label>Jam Tidur & Bangun</label>
+              <div style="display:flex; gap:10px;">
+                <input type="time" id="jamTidur">
+                <input type="time" id="jamBangun">
+              </div>
+            </div>
+          </div>
+
+          <!-- Kurangi Manis -->
+          <div class="mission-card" id="cardManis">
+            <div class="mission-header">
+              <span>[🍊] Kurangi Minuman Manis (15 Poin)</span>
+              <input type="checkbox" id="checkManis" class="mission-toggle" onchange="toggleMisi('Manis')">
+            </div>
+          </div>
+
+          <!-- Batasi HP -->
+          <div class="mission-card" id="cardHP">
+            <div class="mission-header">
+              <span>[📵] Batasi HP Malam (15 Poin)</span>
+              <input type="checkbox" id="checkHP" class="mission-toggle" onchange="toggleMisi('HP')">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>JURNAL HARI INI</label>
+          <textarea id="jurnal" placeholder="Apa tantanganmu hari ini? (Min 10 karakter)"
+            style="height:80px;"></textarea>
+        </div>
+
+        <!-- Persetujuan Misi Sehat -->
+        <div class="mission-consent">
+          <h3>Persetujuan Misi Sehat</h3>
+          <p>
+            SehatTrack bukan ujian. Ini adalah misi sehat 30 hari untuk membantu kamu mengenal kebiasaanmu sendiri dan
+            perlahan memperbaikinya. Isi dengan jujur, karena perubahan terbaik selalu dimulai dari keberanian melihat
+            diri sendiri apa adanya.
+          </p>
+
+          <label class="consent-check">
+            <input type="checkbox" id="kejujuranMisi" />
+            <span>
+              Saya setuju dan berkomitmen mengisi misi sehat hari ini dengan jujur.
+            </span>
+          </label>
+        </div>
+
+        <div class="score-preview">
+          <span style="font-size: 0.8rem;">PREVIEW SKOR</span>
+          <span id="scoreVal" class="score-val">0</span>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-primary">
+          <span id="btnText">SIMPAN MISI HARI INI</span>
+          <div id="loader" class="loader" style="display:none;"></div>
+        </button>
+      </form>
+    </section>
+
+    <!-- Section Guru -->
+    <section id="adminView" style="display:none;">
+      <div id="adminLogin" class="card">
+        <i data-lucide="lock" style="width:48px; height:48px; color:var(--neon-gold); margin-bottom:15px;"></i>
+        <h3 style="margin-bottom:20px; font-family:'Orbitron';">AKSES TERBATAS GURU</h3>
+        <input type="password" id="passGuru" placeholder="PASSWORD"
+          style="text-align:center; margin-bottom:20px; max-width:300px; display:inline-block;">
+        <button onclick="loginAdmin()" class="btn-primary"
+          style="max-width:200px; margin-top:0; display:block; margin:auto;">MASUK</button>
+      </div>
+
+      <div id="adminContent" class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="font-family:'Orbitron'; font-size:1rem; color:var(--neon-gold);">DASHBOARD MONITORING</h3>
+          <button onclick="fetchData()" class="btn-primary"
+            style="width:auto; padding:8px 15px; margin-top:0; font-size:0.8rem;">REFRESH</button>
+        </div>
+        <div id="adminTableContainer" style="overflow-x:auto;">
+          <!-- Data Tabel -->
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>PROVIDE APPS BY FENDI AKHMAD, S.Pd</p>
+      <p>&copy; 2026 SMP NEGERI 1 BANYUBIRU</p>
+    </footer>
+  </div>
+
+  <script>
+    // GANTI URL INI DENGAN URL WEB APP GAS ANDA
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzTZybT_zpXLqHgP-ty_dPUaEnM-H9jORfSEMiABcbszkyssctnI0j86M6ZYzKbDuTSNg/exec";
+
+    function switchView(view) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(view + 'Tab').classList.add('active');
+      document.getElementById('studentView').style.display = view === 'student' ? 'block' : 'none';
+      document.getElementById('adminView').style.display = view === 'teacher' ? 'block' : 'none';
+    }
+
+    function toggleMisi(misi) {
+      const isChecked = document.getElementById('check' + misi).checked;
+      const detail = document.getElementById('detail' + misi);
+      const card = document.getElementById('card' + misi);
+      if (detail) detail.style.display = isChecked ? 'block' : 'none';
+      if (isChecked) card.classList.add('active'); else card.classList.remove('active');
+      calculateScore();
+    }
+
+    function calculateScore() {
+      let score = 0;
+      if (document.getElementById('checkSarapan').checked) score += 15;
+      if (document.getElementById('checkAir').checked) score += 15;
+      if (document.getElementById('checkOlahraga').checked) score += 20;
+      if (document.getElementById('checkTidur').checked) score += 20;
+      if (document.getElementById('checkManis').checked) score += 15;
+      if (document.getElementById('checkHP').checked) score += 15;
+      document.getElementById('scoreVal').innerText = score;
+      return score;
+    }
+
+    document.getElementById('missionForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      const btnText = document.getElementById('btnText');
+      const loader = document.getElementById('loader');
+      const score = calculateScore();
+
+      const kejujuranMisi = document.getElementById("kejujuranMisi");
+      if (!kejujuranMisi.checked) {
+        alert("Centang persetujuan kejujuran sebelum menyimpan misi hari ini.");
+        return;
+      }
+
+      if (score === 0) return alert("Pilih minimal satu misi!");
+      if (document.getElementById('jurnal').value.length < 10) return alert("Jurnal minimal 10 karakter!");
+
+      btn.disabled = true;
+      btnText.innerText = "Mengirim data misi...";
+      loader.style.display = "inline-block";
+
+      const now = new Date();
+      const tanggalStr = now.toISOString().split('T')[0];
+      const idSiswa = document.getElementById('idSiswa').value;
+      const submissionId = tanggalStr + "_" + idSiswa;
+
+      const payload = {
+        submissionId: submissionId,
+        timestamp: now.toLocaleString(),
+        tanggal: tanggalStr,
+        idSiswa: idSiswa,
+        nama: document.getElementById('nama').value,
+        kelas: document.getElementById('kelas').value,
+        sarapan: document.getElementById('checkSarapan').checked ? "Ya" : "Tidak",
+        menuSarapan: document.getElementById('menuSarapan').value,
+        airPutih: document.getElementById('checkAir').checked ? "Ya" : "Tidak",
+        jumlahAirPutih: document.getElementById('jumlahAir').value,
+        olahraga: document.getElementById('checkOlahraga').checked ? "Ya" : "Tidak",
+        jenisOlahraga: document.getElementById('jenisOlahraga').value,
+        tidurCukup: document.getElementById('checkTidur').checked ? "Ya" : "Tidak",
+        jamTidur: document.getElementById('jamTidur').value,
+        jamBangun: document.getElementById('jamBangun').value,
+        kurangiManis: document.getElementById('checkManis').checked ? "Ya" : "Tidak",
+        batasiHP: document.getElementById('checkHP').checked ? "Ya" : "Tidak",
+        skorHarian: score,
+        mood: "😊",
+        jurnal: document.getElementById('jurnal').value,
+        action: "submit"
+      };
+
+      try {
+        // Post data
+        await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+        alert("Data berhasil disimpan / diperbarui!");
+      } catch (err) {
+        alert("Gagal mengirim data. Periksa koneksi.");
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "SIMPAN MISI HARI INI";
+        loader.style.display = "none";
+      }
+    };
+
+    function loginAdmin() {
+      if (document.getElementById('passGuru').value === '696969') {
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        fetchData();
+      } else {
+        alert("Password Salah!");
+      }
+    }
+
+    async function fetchData() {
+      const container = document.getElementById('adminTableContainer');
+      container.innerHTML = "<p style='text-align:center;'>Memuat data...</p>";
+      try {
+        const res = await fetch(GAS_URL + "?action=getData");
+        const data = await res.json();
+        let html = "<table style='width:100%; border-collapse:collapse; min-width:400px;'>";
+        html += "<thead><tr><th style='text-align:left; padding:10px; border-bottom:1px solid #333;'>Nama</th><th style='padding:10px; border-bottom:1px solid #333;'>Skor</th><th style='padding:10px; border-bottom:1px solid #333;'>Tanggal</th></tr></thead><tbody>";
+        data.reverse().forEach(row => {
+          html += `<tr><td style='padding:10px; border-bottom:1px solid #222;'>${row.nama}</td><td style='text-align:center; color:var(--neon-cyan);'>${row.skorharian}</td><td style='text-align:center; font-size:0.7rem;'>${row.tanggal}</td></tr>`;
         });
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = "<p style='color:red;'>Gagal mengambil data.</p>";
+      }
+    }
 
-        // --- UI FUNCTIONS ---
-        function showHeroFallback() {
-            document.getElementById('heroImg').style.display = 'none';
-            document.getElementById('heroFallback').style.display = 'flex';
-        }
-
-        function switchView(view) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(view + 'Tab').classList.add('active');
-            
-            if (view === 'student') {
-                document.getElementById('studentView').style.display = 'block';
-                document.getElementById('adminView').style.display = 'none';
-            } else {
-                document.getElementById('studentView').style.display = 'none';
-                document.getElementById('adminView').style.display = 'block';
-                if (!isAdminLoggedIn) {
-                    document.getElementById('adminLogin').style.display = 'flex';
-                    document.getElementById('adminContent').style.display = 'none';
-                }
-            }
-        }
-
-        function toggleDetail(misi) {
-            const isChecked = document.getElementById('check' + misi).checked;
-            const detail = document.getElementById('detail' + misi);
-            const card = document.getElementById('card' + misi);
-            
-            if (isChecked) {
-                detail.style.display = 'block';
-                card.classList.add('active');
-            } else {
-                detail.style.display = 'none';
-                card.classList.remove('active');
-            }
-            calculateScore();
-        }
-
-        function selectMood(mood, el) {
-            selectedMood = mood;
-            document.querySelectorAll('.mood-item').forEach(m => m.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-
-        // --- CORE LOGIC ---
-        function updateProgress() {
-            const start = new Date(PROGRAM_START_DATE);
-            const now = new Date();
-            const diffTime = Math.abs(now - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            const day = Math.min(Math.max(diffDays, 1), 30);
-            document.getElementById('hariTeks').innerText = `Hari ke-${day} dari 30`;
-            document.getElementById('progressBar').style.width = `${(day / 30) * 100}%`;
-        }
-
-        function calculateScore() {
-            let score = 0;
-            if (document.getElementById('checkSarapan').checked) score += 15;
-            if (document.getElementById('checkAir').checked) score += 15;
-            if (document.getElementById('checkOlahraga').checked) score += 20;
-            if (document.getElementById('checkTidur').checked) score += 20;
-            if (document.getElementById('checkManis').checked) score += 15;
-            if (document.getElementById('checkHP').checked) score += 15;
-            
-            currentScore = score;
-            document.getElementById('scoreVal').innerText = score;
-            
-            const kategori = getKategori(score);
-            document.getElementById('kategoriTeks').innerText = kategori.text;
-            document.getElementById('kategoriTeks').style.color = score >= 70 ? 'var(--neon-cyan)' : 'var(--neon-gold)';
-        }
-
-        function getKategori(score) {
-            if (score >= 85) return { text: "Sangat Baik", badge: "Super Sehat" };
-            if (score >= 70) return { text: "Baik", badge: "Pejuang Sehat" };
-            if (score >= 50) return { text: "Cukup", badge: "Mulai Bertumbuh" };
-            return { text: "Perlu Semangat Lagi", badge: "Ayo Bangkit" };
-        }
-
-        // --- FORM SUBMISSION ---
-        document.getElementById('missionForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Validasi Dasar
-            const idSiswa = document.getElementById('idSiswa').value;
-            const nama = document.getElementById('nama').value;
-            const kelas = document.getElementById('kelas').value;
-            const jurnal = document.getElementById('jurnal').value;
-
-            if (!idSiswa || !nama || !kelas) return showToast("Identitas wajib diisi!");
-            if (!selectedMood) return showToast("Mood wajib dipilih!");
-            if (jurnal.length < 10) return showToast("Jurnal minimal 10 karakter!");
-
-            // Validasi Misi
-            if (document.getElementById('checkSarapan').checked && !document.getElementById('menuSarapan').value) 
-                return showToast("Menu sarapan wajib diisi!");
-            if (document.getElementById('checkOlahraga').checked && (!document.getElementById('jenisOlahraga').value || !document.getElementById('durasiOlahraga').value)) 
-                return showToast("Detail olahraga wajib diisi!");
-            if (document.getElementById('checkTidur').checked && !document.getElementById('jamTidur').value) 
-                return showToast("Jam tidur wajib diisi!");
-            
-            if (currentScore === 0) return showToast("Centang minimal satu misi hari ini!");
-
-            // Persiapan Payload
-            const submitBtn = document.getElementById('btnSubmit');
-            const loader = document.getElementById('submitLoader');
-            submitBtn.disabled = true;
-            loader.style.display = 'block';
-            showToast("Mengirim data misi...", "info");
-
-            const payload = {
-                timestamp: new Date().toISOString(),
-                tanggal: new Date().toLocaleDateString('id-ID'),
-                idSiswa,
-                nama,
-                kelas,
-                sarapan: document.getElementById('checkSarapan').checked ? "Ya" : "Tidak",
-                menuSarapan: document.getElementById('menuSarapan').value,
-                airPutih: document.getElementById('checkAir').checked ? "Ya" : "Tidak",
-                jumlahAir: document.getElementById('jumlahAir').value,
-                olahraga: document.getElementById('checkOlahraga').checked ? "Ya" : "Tidak",
-                jenisAktivitas: document.getElementById('jenisOlahraga').value,
-                durasiAktivitas: document.getElementById('durasiOlahraga').value,
-                tidurCukup: document.getElementById('checkTidur').checked ? "Ya" : "Tidak",
-                jamTidur: document.getElementById('jamTidur').value,
-                jamBangun: document.getElementById('jamBangun').value,
-                kurangiManis: document.getElementById('checkManis').checked ? "Ya" : "Tidak",
-                minuman: document.getElementById('minumanManis').value,
-                batasiHP: document.getElementById('checkHP').checked ? "Ya" : "Tidak",
-                durasiHP: document.getElementById('durasiHP').value,
-                mood: selectedMood,
-                jurnal: jurnal,
-                skorHarian: currentScore,
-                kategoriSkor: getKategori(currentScore).text,
-                badgeHarian: getKategori(currentScore).badge,
-                action: 'submit'
-            };
-
-            try {
-                // Post to Google Apps Script
-                await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(payload)
-                });
-
-                showResult(payload);
-            } catch (err) {
-                showToast("Data belum terkirim. Coba lagi atau hubungi guru.", "error");
-            } finally {
-                submitBtn.disabled = false;
-                loader.style.display = 'none';
-            }
-        });
-
-        // --- ADMIN FUNCTIONS ---
-        function loginAdmin() {
-            const code = document.getElementById('adminCode').value;
-            if (code === ADMIN_CODE) {
-                isAdminLoggedIn = true;
-                document.getElementById('adminLogin').style.display = 'none';
-                document.getElementById('adminContent').style.display = 'block';
-                refreshData();
-            } else {
-                showToast("Kode Admin Salah!", "error");
-            }
-        }
-
-        async function refreshData() {
-            const tableBody = document.querySelector('#adminTable tbody');
-            tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Memuat data...</td></tr>';
-
-            try {
-                const response = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?action=getData`);
-                const data = await response.json();
-                
-                tableBody.innerHTML = '';
-                let totalScore = 0;
-                
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${row.nama || '-'}</td>
-                        <td>${row.kelas || '-'}</td>
-                        <td style="color:var(--neon-cyan); font-weight:bold;">${row.skorharian || 0}</td>
-                        <td style="font-size:0.7rem; opacity:0.6;">${row.tanggal || '-'}</td>
-                    `;
-                    tableBody.appendChild(tr);
-                    totalScore += parseInt(row.skorharian || 0);
-                });
-
-                document.getElementById('statTotal').innerText = data.length;
-                document.getElementById('statRata').innerText = data.length > 0 ? Math.round(totalScore / data.length) : 0;
-                
-                showToast("Data berhasil diperbarui.", "success");
-            } catch (err) {
-                showToast("Gagal mengambil data admin.", "error");
-                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--neon-magenta);">Gagal memuat data.</td></tr>';
-            }
-        }
-
-        // --- FINAL RESULTS ---
-        function showResult(data) {
-            const modal = document.getElementById('resultModal');
-            const kat = getKategori(data.skorHarian);
-            
-            document.getElementById('finalScore').innerText = data.skorHarian;
-            document.getElementById('resultBadge').innerText = kat.badge;
-            document.getElementById('resultKategori').innerText = kat.text;
-            
-            // Set Badge Image based on score
-            let badgeUrl = "https://cdn-icons-png.flaticon.com/512/3112/3112946.png"; // Gold
-            if (data.skorHarian < 50) badgeUrl = "https://cdn-icons-png.flaticon.com/512/3112/3112942.png"; // Bronze
-            else if (data.skorHarian < 85) badgeUrl = "https://cdn-icons-png.flaticon.com/512/3112/3112944.png"; // Silver
-            
-            document.getElementById('badgeImg').src = badgeUrl;
-            
-            // Random Quote
-            const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-            document.getElementById('modalQuote').innerText = `"${randomQuote}"`;
-            
-            modal.style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('resultModal').style.display = 'none';
-            document.getElementById('missionForm').reset();
-            selectedMood = "";
-            document.querySelectorAll('.mood-item').forEach(m => m.classList.remove('selected'));
-            document.querySelectorAll('.mission-detail').forEach(d => d.style.display = 'none');
-            document.querySelectorAll('.mission-card').forEach(c => c.classList.remove('active'));
-            calculateScore();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
-        }
-    </script>
+    lucide.createIcons();
+  </script>
 </body>
+
 </html>
