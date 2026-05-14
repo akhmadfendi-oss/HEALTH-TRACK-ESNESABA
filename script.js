@@ -4,7 +4,7 @@
  */
 
 // Configuration - URL Web App GAS Anda
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwFaFZ9F2xtxIc9Iy-6upC4J-_Gg6rT2X9wauqdMuir9A4ahqQ7vH82OHYsrdJp7aJNOg/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyptcuYQp0t7mBceg6u9xqW7lvAV-Hj8Jrvcl7GSPG_GgxMXpYouRxvKf6ldKw2zHX_9w/exec";
 
 // Motivation Quotes
 const QUOTES = [
@@ -20,7 +20,7 @@ const QUOTES = [
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     setRandomQuote();
-    
+
     const savedUser = JSON.parse(localStorage.getItem('sehatTrack_user'));
     if (savedUser) {
         if (document.getElementById('idSiswa')) document.getElementById('idSiswa').value = savedUser.idSiswa || '';
@@ -36,10 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function switchView(view) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(view + 'Tab').classList.add('active');
-    
+
     const studentView = document.getElementById('studentView');
     const adminView = document.getElementById('adminView');
-    
+
     if (view === 'student') {
         studentView.style.display = 'block';
         adminView.style.display = 'none';
@@ -61,7 +61,7 @@ function toggleMisi(misi) {
     const isChecked = document.getElementById('check' + misi).checked;
     const detail = document.getElementById('detail' + misi);
     const card = document.getElementById('card' + misi);
-    
+
     if (detail) detail.style.display = isChecked ? 'block' : 'none';
     if (isChecked) {
         card.classList.add('active');
@@ -79,13 +79,13 @@ function calculateScore() {
     if (document.getElementById('checkTidur').checked) score += 20;
     if (document.getElementById('checkManis').checked) score += 15;
     if (document.getElementById('checkHP').checked) score += 15;
-    
+
     const scoreValElement = document.getElementById('scoreVal');
     if (scoreValElement) scoreValElement.innerText = score;
 
     let kategori = "Perlu Semangat";
     let badge = "🥉 Bronze";
-    
+
     if (score === 100) {
         kategori = "Siswa Teladan";
         badge = "🏆 Diamond";
@@ -104,11 +104,11 @@ const missionForm = document.getElementById('missionForm');
 if (missionForm) {
     missionForm.onsubmit = async (e) => {
         e.preventDefault();
-        
+
         const btn = document.getElementById('btnSubmit');
         const btnText = document.getElementById('btnText');
         const loader = document.getElementById('loader');
-        
+
         const { score, kategori, badge } = calculateScore();
 
         const kejujuranMisi = document.getElementById("kejujuranMisi");
@@ -148,7 +148,7 @@ if (missionForm) {
             olahraga: document.getElementById('checkOlahraga').checked ? "Ya" : "Tidak", // Col 7
             tidur: document.getElementById('checkTidur').checked ? "Ya" : "Tidak", // Col 8
             skor: score, // Col 9 (Sama dengan versi lama)
-            
+
             // DATA TAMBAHAN V2 (Mulai Col 10)
             submissionId: submissionId,
             tanggal: tanggalStr,
