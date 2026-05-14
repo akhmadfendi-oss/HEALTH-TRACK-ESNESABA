@@ -123,10 +123,12 @@
           </label>
         </div>
 
-        <!-- Mobile Legend Style Rank Display -->
+        <!-- Status Rank & Motivasi (Text Only Version) -->
         <div id="rankContainer" class="rank-container">
-          <img id="rankImg" src="" alt="Rank" class="rank-image">
           <div id="rankText" class="rank-name">WARRIOR</div>
+          <div id="motivationText" style="color: var(--neon-cyan); margin-top: 10px; font-style: italic; font-size: 1.1rem; line-height: 1.4;">
+            "Ayo mulai hidup sehat hari ini!"
+          </div>
         </div>
 
         <div class="score-preview">
@@ -163,6 +165,13 @@
       <p>PROVIDE APPS BY FENDI AKHMAD, S.Pd</p>
       <p>&copy; 2026 SMP NEGERI 1 BANYUBIRU</p>
     </footer>
+
+    <!-- Success Overlay (Full Screen Victory) -->
+    <div id="successOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(6,9,15,0.95); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; backdrop-filter:blur(10px);">
+      <div id="victoryRank" style="font-family:'Orbitron'; font-size:3.5rem; font-weight:900; margin-bottom:20px; text-shadow:0 0 20px var(--neon-cyan);">MYTHIC</div>
+      <div id="victoryMsg" style="color:white; font-size:1.3rem; font-style:italic; max-width:500px; margin-bottom:40px; line-height:1.6;">"Luar biasa! Kamu adalah pahlawan kesehatan sejati."</div>
+      <button onclick="closeOverlay()" class="btn-primary" style="max-width:250px;">SIAP UNTUK ESOK!</button>
+    </div>
   </div>
 
   <script src="script.js"></script>

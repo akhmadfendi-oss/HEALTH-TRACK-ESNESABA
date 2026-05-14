@@ -83,21 +83,47 @@ function calculateScore() {
     const scoreValElement = document.getElementById('scoreVal');
     if (scoreValElement) scoreValElement.innerText = score;
 
+    // Rank & Motivation Logic (Text Only)
+    const rankContainer = document.getElementById('rankContainer');
+    const rankText = document.getElementById('rankText');
+    const motivationText = document.getElementById('motivationText');
+
     let kategori = "Perlu Semangat";
     let badge = "🥉 Bronze";
+    let rankName = "WARRIOR";
+    let pesan = "SEMANGAT! Esok adalah kesempatan baru untuk memulai hidup yang lebih sehat. Kamu pasti bisa!";
 
     if (score === 100) {
         kategori = "Siswa Teladan";
         badge = "🏆 Diamond";
+        rankName = "MYTHIC";
+        pesan = "LUAR BIASA! Kamu adalah pahlawan kesehatan sejati. Pertahankan disiplin ini esok hari ya!";
     } else if (score >= 80) {
         kategori = "Sangat Sehat";
         badge = "🥇 Gold";
+        rankName = "EPIC / LEGEND";
+        pesan = "HEBAT! Tubuhmu berterima kasih padamu. Sedikit lagi menuju sempurna, ayo lebih konsisten esok!";
     } else if (score >= 60) {
         kategori = "Cukup Sehat";
         badge = "🥈 Silver";
+        rankName = "GRANDMASTER";
+        pesan = "BAGUS! Kamu sudah di jalur yang benar. Mari tingkatkan lagi durasi istirahat dan olahraga esok!";
     }
 
-    return { score, kategori, badge };
+    if (rankContainer && score > 0) {
+        rankContainer.style.display = 'block';
+        rankText.innerText = rankName;
+        motivationText.innerText = `"${pesan}"`;
+        
+        // Warna Dinamis
+        const color = score === 100 ? 'var(--neon-cyan)' : (score >= 80 ? 'var(--neon-gold)' : 'var(--neon-magenta)');
+        rankText.style.color = color;
+        motivationText.style.color = color;
+    } else if (rankContainer) {
+        rankContainer.style.display = 'none';
+    }
+
+    return { score, kategori, badge, rankName };
 }
 
 const missionForm = document.getElementById('missionForm');
@@ -175,7 +201,23 @@ if (missionForm) {
 
         try {
             await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("DATA BERHASIL DISIMPAN!");
+            
+            // Tampilkan Overlay Kemenangan (Victory)
+            const overlay = document.getElementById('successOverlay');
+            const vRank = document.getElementById('victoryRank');
+            const vMsg = document.getElementById('victoryMsg');
+            
+            if (overlay) {
+                vRank.innerText = rankName;
+                vMsg.innerText = `"${pesan}"`;
+                
+                // Sesuaikan warna rank
+                const color = score === 100 ? 'var(--neon-cyan)' : (score >= 80 ? 'var(--neon-gold)' : 'var(--neon-magenta)');
+                vRank.style.color = color;
+                vRank.style.textShadow = `0 0 20px ${color}`;
+                
+                overlay.style.display = 'flex';
+            }
         } catch (err) {
             alert("Gagal mengirim data. Cek koneksi.");
         } finally {
@@ -184,6 +226,13 @@ if (missionForm) {
             loader.style.display = "none";
         }
     };
+}
+
+// Function untuk menutup Overlay
+function closeOverlay() {
+    const overlay = document.getElementById('successOverlay');
+    if (overlay) overlay.style.display = 'none';
+    location.reload(); // Refresh halaman agar form bersih kembali
 }
 
 function loginAdmin() {
