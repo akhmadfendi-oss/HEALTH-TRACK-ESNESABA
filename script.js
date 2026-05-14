@@ -1,9 +1,9 @@
 /**
- * SEHATTRACK ESNESABA - Logic V2
- * Optimized for SMP Negeri 1 Banyubiru
+ * SEHATTRACK ESNESABA - Logic V2.2 (COMPATIBILITY MODE)
+ * Dibuat agar tidak merusak rumus Rekap di Google Sheets
  */
 
-// Configuration - URL Web App GAS Anda (Sudah diperbaiki dari screenshot)
+// Configuration - URL Web App GAS Anda
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwFaFZ9F2xtxIc9Iy-6upC4J-_Gg6rT2X9wauqdMuir9A4ahqQ7vH82OHYsrdJp7aJNOg/exec";
 
 // Motivation Quotes
@@ -21,7 +21,6 @@ const QUOTES = [
 document.addEventListener('DOMContentLoaded', () => {
     setRandomQuote();
     
-    // Load local storage if available
     const savedUser = JSON.parse(localStorage.getItem('sehatTrack_user'));
     if (savedUser) {
         if (document.getElementById('idSiswa')) document.getElementById('idSiswa').value = savedUser.idSiswa || '';
@@ -29,13 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('kelas')) document.getElementById('kelas').value = savedUser.kelas || '';
     }
 
-    // Initialize Lucide Icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 });
 
-// View Switcher
 function switchView(view) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(view + 'Tab').classList.add('active');
@@ -52,7 +49,6 @@ function switchView(view) {
     }
 }
 
-// Random Quote
 function setRandomQuote() {
     const quoteElement = document.getElementById('motivationQuote');
     if (quoteElement) {
@@ -61,7 +57,6 @@ function setRandomQuote() {
     }
 }
 
-// Toggle Mission Details
 function toggleMisi(misi) {
     const isChecked = document.getElementById('check' + misi).checked;
     const detail = document.getElementById('detail' + misi);
@@ -76,11 +71,8 @@ function toggleMisi(misi) {
     calculateScore();
 }
 
-// Calculate Score & Badge
 function calculateScore() {
     let score = 0;
-    
-    // Mission points mapping
     if (document.getElementById('checkSarapan').checked) score += 15;
     if (document.getElementById('checkAir').checked) score += 15;
     if (document.getElementById('checkOlahraga').checked) score += 20;
@@ -108,7 +100,6 @@ function calculateScore() {
     return { score, kategori, badge };
 }
 
-// Form Submission
 const missionForm = document.getElementById('missionForm');
 if (missionForm) {
     missionForm.onsubmit = async (e) => {
@@ -118,7 +109,6 @@ if (missionForm) {
         const btnText = document.getElementById('btnText');
         const loader = document.getElementById('loader');
         
-        // Extracting values from the result object
         const { score, kategori, badge } = calculateScore();
 
         const kejujuranMisi = document.getElementById("kejujuranMisi");
@@ -138,9 +128,8 @@ if (missionForm) {
             return;
         }
 
-        // Preparation for submission
         btn.disabled = true;
-        btnText.innerText = "Mengirim data misi...";
+        btnText.innerText = "Mengirim data...";
         loader.style.display = "inline-block";
 
         const now = new Date();
@@ -148,25 +137,29 @@ if (missionForm) {
         const idSiswa = document.getElementById('idSiswa').value;
         const submissionId = tanggalStr + "_" + idSiswa;
 
+        // PAYLOAD DISESUAIKAN AGAR KOLOM 1-9 TETAP SAMA (COMPATIBILITY)
         const payload = {
+            timestamp: now.toLocaleString(), // Col 1
+            nama: document.getElementById('nama').value, // Col 2
+            kelas: document.getElementById('kelas').value, // Col 3
+            sarapan: document.getElementById('checkSarapan').checked ? "Ya" : "Tidak", // Col 4
+            menuSarapan: document.getElementById('menuSarapan').value, // Col 5
+            airPutih: document.getElementById('checkAir').checked ? "Ya" : "Tidak", // Col 6
+            olahraga: document.getElementById('checkOlahraga').checked ? "Ya" : "Tidak", // Col 7
+            tidur: document.getElementById('checkTidur').checked ? "Ya" : "Tidak", // Col 8
+            skor: score, // Col 9 (Sama dengan versi lama)
+            
+            // DATA TAMBAHAN V2 (Mulai Col 10)
             submissionId: submissionId,
-            timestamp: now.toLocaleString(),
             tanggal: tanggalStr,
             idSiswa: idSiswa,
-            nama: document.getElementById('nama').value,
-            kelas: document.getElementById('kelas').value,
-            sarapan: document.getElementById('checkSarapan').checked ? "Ya" : "Tidak",
-            menuSarapan: document.getElementById('menuSarapan').value,
-            airPutih: document.getElementById('checkAir').checked ? "Ya" : "Tidak",
             jumlahAirPutih: document.getElementById('jumlahAir').value,
-            olahraga: document.getElementById('checkOlahraga').checked ? "Ya" : "Tidak",
             jenisOlahraga: document.getElementById('jenisOlahraga').value,
             tidurCukup: document.getElementById('checkTidur').checked ? "Ya" : "Tidak",
             jamTidur: document.getElementById('jamTidur').value,
             jamBangun: document.getElementById('jamBangun').value,
             kurangiManis: document.getElementById('checkManis').checked ? "Ya" : "Tidak",
             batasiHP: document.getElementById('checkHP').checked ? "Ya" : "Tidak",
-            skorHarian: score,
             kategoriSkor: kategori,
             badgeHarian: badge,
             mood: "😊",
@@ -174,7 +167,6 @@ if (missionForm) {
             action: "submit"
         };
 
-        // Save to localStorage
         localStorage.setItem('sehatTrack_user', JSON.stringify({
             idSiswa: payload.idSiswa,
             nama: payload.nama,
@@ -182,16 +174,10 @@ if (missionForm) {
         }));
 
         try {
-            // Post data to GAS
-            await fetch(GAS_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify(payload) 
-            });
-            alert("DATA BERHASIL DISIMPAN! Terima kasih sudah jujur hari ini.");
+            await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("DATA BERHASIL DISIMPAN!");
         } catch (err) {
-            console.error(err);
-            alert("Gagal mengirim data ke cloud. Periksa koneksi internet Anda.");
+            alert("Gagal mengirim data. Cek koneksi.");
         } finally {
             btn.disabled = false;
             btnText.innerText = "SIMPAN MISI HARI INI";
@@ -200,7 +186,6 @@ if (missionForm) {
     };
 }
 
-// Admin Logic
 function loginAdmin() {
     const pass = document.getElementById('passGuru').value;
     if (pass === '696969') {
@@ -208,43 +193,28 @@ function loginAdmin() {
         document.getElementById('adminContent').style.display = 'block';
         fetchData();
     } else {
-        alert("Password Salah! Akses ditolak.");
+        alert("Password Salah!");
     }
 }
 
 async function fetchData() {
     const container = document.getElementById('adminTableContainer');
-    container.innerHTML = "<p style='text-align:center; padding: 20px;'>Memindai database...</p>";
-    
+    container.innerHTML = "<p style='text-align:center;'>Memindai database...</p>";
     try {
         const res = await fetch(GAS_URL + "?action=getData");
         const data = await res.json();
-        
         if (!data || data.length === 0) {
-            container.innerHTML = "<p style='text-align:center; color:var(--neon-gold); padding: 20px;'>Belum ada data monitoring ditemukan.</p>";
+            container.innerHTML = "<p style='text-align:center;'>Belum ada data.</p>";
             return;
         }
-
-        let html = "<table>";
-        html += "<thead><tr><th>NAMA AGEN</th><th>SKOR</th><th>TANGGAL</th></tr></thead><tbody>";
-        
-        // Sort by date (reverse)
+        let html = "<table><thead><tr><th>NAMA</th><th>SKOR</th><th>TANGGAL</th></tr></thead><tbody>";
         data.reverse().forEach(row => {
-            const displayScore = row.skorharian || row.skor || 0;
-            const nama = row.nama || 'Anonim';
-            const tanggal = row.tanggal || '-';
-            
-            html += `<tr>
-                <td>${nama}</td>
-                <td style='color:var(--neon-cyan); font-weight:bold;'>${displayScore}</td>
-                <td style='font-size:0.7rem; opacity:0.7;'>${tanggal}</td>
-            </tr>`;
+            const displayScore = row.skor || 0;
+            html += `<tr><td>${row.nama || '-'}</td><td style='color:var(--neon-cyan);'>${displayScore}</td><td>${row.tanggal || row.timestamp || '-'}</td></tr>`;
         });
-        
         html += "</tbody></table>";
         container.innerHTML = html;
     } catch (err) {
-        console.error(err);
-        container.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Gagal mengambil data dari server.</p>";
+        container.innerHTML = "<p style='color:red;'>Gagal mengambil data.</p>";
     }
 }

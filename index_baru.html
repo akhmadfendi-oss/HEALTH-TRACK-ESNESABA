@@ -1,0 +1,165 @@
+<!-- SEHATTRACK V2.2 - FILE BARU UNTUK REFRESH EDITOR -->
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SehatTrack Esnesaba - FIXED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <header>
+      <div class="header-titles">
+        <h2>SMP NEGERI 1 BANYUBIRU</h2>
+        <h1>SEHATTRACK</h1>
+        <div class="misi-title">MISI 30 HARI HIDUP SEHAT</div>
+      </div>
+    </header>
+
+    <div class="quote-box" id="motivationQuote">
+      "Kesehatan adalah investasi terbaik untuk masa depanmu."
+    </div>
+
+    <div class="tabs">
+      <div id="studentTab" class="tab active" onclick="switchView('student')">Entri Siswa</div>
+      <div id="teacherTab" class="tab" onclick="switchView('teacher')">Kontrol Guru</div>
+    </div>
+
+    <section id="studentView">
+      <form id="missionForm">
+        <div class="card">
+          <label>ID SISWA (ABSEN)</label>
+          <input type="text" id="idSiswa" placeholder="Contoh: 8A-01" required>
+          <label style="margin-top: 15px;">NAMA LENGKAP</label>
+          <input type="text" id="nama" placeholder="Nama Sesuai Absen" required>
+          <label style="margin-top: 15px;">KELAS / REGU</label>
+          <select id="kelas" required>
+            <option value="">Pilih Kelas</option>
+            <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
+            <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
+            <option value="7G">7G</option><option value="8A">8A</option><option value="8B">8B</option>
+            <option value="9A">9A</option><option value="9B">9B</option>
+          </select>
+        </div>
+
+        <div class="card">
+          <h3 style="color:var(--neon-gold); font-size:0.9rem; margin-bottom:15px; font-family:'Orbitron';">MISI HARIAN</h3>
+          <div class="mission-card" id="cardSarapan">
+            <div class="mission-header">
+              <span>[🍌] Misi Sarapan (15 Poin)</span>
+              <input type="checkbox" id="checkSarapan" class="mission-toggle" onchange="toggleMisi('Sarapan')">
+            </div>
+            <div class="mission-detail" id="detailSarapan">
+              <label>Menu Sarapan</label>
+              <input type="text" id="menuSarapan" placeholder="Makan apa tadi?">
+            </div>
+          </div>
+          <div class="mission-card" id="cardAir">
+            <div class="mission-header">
+              <span>[💧] Misi Air Putih (15 Poin)</span>
+              <input type="checkbox" id="checkAir" class="mission-toggle" onchange="toggleMisi('Air')">
+            </div>
+            <div class="mission-detail" id="detailAir">
+              <label>Jumlah Gelas (Min 8)</label>
+              <input type="number" id="jumlahAir" placeholder="Contoh: 8">
+            </div>
+          </div>
+          <div class="mission-card" id="cardOlahraga">
+            <div class="mission-header">
+              <span>[🏃] Misi Gerak Aktif (20 Poin)</span>
+              <input type="checkbox" id="checkOlahraga" class="mission-toggle" onchange="toggleMisi('Olahraga')">
+            </div>
+            <div class="mission-detail" id="detailOlahraga">
+              <label>Jenis & Durasi (Menit)</label>
+              <input type="text" id="jenisOlahraga" placeholder="Misal: Lari 30 Menit">
+            </div>
+          </div>
+          <div class="mission-card" id="cardTidur">
+            <div class="mission-header">
+              <span>[🌙] Misi Tidur Cukup (20 Poin)</span>
+              <input type="checkbox" id="checkTidur" class="mission-toggle" onchange="toggleMisi('Tidur')">
+            </div>
+            <div class="mission-detail" id="detailTidur">
+              <label>Jam Tidur & Bangun</label>
+              <div style="display:flex; gap:10px;">
+                <input type="time" id="jamTidur">
+                <input type="time" id="jamBangun">
+              </div>
+            </div>
+          </div>
+          <div class="mission-card" id="cardManis">
+            <div class="mission-header">
+              <span>[🍊] Kurangi Minuman Manis (15 Poin)</span>
+              <input type="checkbox" id="checkManis" class="mission-toggle" onchange="toggleMisi('Manis')">
+            </div>
+          </div>
+          <div class="mission-card" id="cardHP">
+            <div class="mission-header">
+              <span>[📵] Batasi HP Malam (15 Poin)</span>
+              <input type="checkbox" id="checkHP" class="mission-toggle" onchange="toggleMisi('HP')">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>JURNAL HARI INI</label>
+          <textarea id="jurnal" placeholder="Apa tantanganmu hari ini? (Min 10 karakter)" style="height:80px;"></textarea>
+        </div>
+
+        <div class="mission-consent">
+          <h3>Persetujuan Misi Sehat</h3>
+          <p>Isi dengan jujur, karena perubahan terbaik selalu dimulai dari keberanian melihat diri sendiri apa adanya.</p>
+          <label class="consent-check">
+            <input type="checkbox" id="kejujuranMisi" />
+            <span>Saya berkomitmen mengisi misi sehat hari ini dengan jujur.</span>
+          </label>
+        </div>
+
+        <div class="score-preview">
+          <span style="font-size: 0.8rem;">PREVIEW SKOR</span>
+          <span id="scoreVal" class="score-val">0</span>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-primary">
+          <span id="btnText">SIMPAN MISI HARI INI</span>
+          <div id="loader" class="loader" style="display:none;"></div>
+        </button>
+      </form>
+    </section>
+
+    <section id="adminView" style="display:none;">
+      <div id="adminLogin" class="card">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <i data-lucide="lock" style="width:48px; height:48px; color:var(--neon-gold); margin-bottom:15px;"></i>
+          <h3 style="font-family:'Orbitron';">AKSES GURU</h3>
+        </div>
+        <input type="password" id="passGuru" placeholder="PASSWORD" style="text-align:center; margin-bottom:20px; max-width:300px; display:block; margin:auto;">
+        <button onclick="loginAdmin()" class="btn-primary" style="max-width:200px; margin:auto; display:block;">MASUK</button>
+      </div>
+      <div id="adminContent" class="card" style="display: none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="font-family:'Orbitron'; font-size:1rem; color:var(--neon-gold);">DASHBOARD</h3>
+          <button onclick="fetchData()" class="btn-primary" style="width:auto; padding:8px 15px; margin-top:0; font-size:0.8rem;">REFRESH</button>
+        </div>
+        <div id="adminTableContainer" style="overflow-x:auto;"></div>
+      </div>
+    </section>
+
+    <footer>
+      <p>PROVIDE APPS BY FENDI AKHMAD, S.Pd</p>
+      <p>&copy; 2026 SMP NEGERI 1 BANYUBIRU</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
