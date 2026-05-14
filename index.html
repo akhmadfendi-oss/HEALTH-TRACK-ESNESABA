@@ -9,299 +9,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap"
     rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    :root {
-      --neon-cyan: #00f2ff;
-      --neon-gold: #ffcc00;
-      --neon-magenta: #ff00ff;
-      --bg-dark: #06090f;
-      --bg-panel: rgba(10, 20, 35, 0.9);
-      --hud-border: 1px solid rgba(0, 242, 255, 0.3);
-      --text-light: #e0e6ed;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: var(--bg-dark);
-      color: var(--text-light);
-      font-family: 'Rajdhani', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-      padding-bottom: 50px;
-    }
-
-    /* Grid Background Effect */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background:
-        linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-      background-size: 30px 30px;
-      z-index: -1;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-      padding-top: 10px;
-    }
-
-    .header-titles h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
-      color: var(--neon-gold);
-      letter-spacing: 2px;
-    }
-
-    .header-titles h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      color: var(--neon-cyan);
-      text-shadow: 0 0 10px rgba(0, 242, 255, 0.6);
-    }
-
-    .misi-title {
-      color: var(--neon-magenta);
-      font-weight: bold;
-      font-size: 0.8rem;
-      letter-spacing: 3px;
-      margin-top: 5px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-    }
-
-    .tab {
-      flex: 1;
-      padding: 12px;
-      text-align: center;
-      background: rgba(0, 242, 255, 0.05);
-      border: 1px solid rgba(0, 242, 255, 0.2);
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
-      transition: 0.3s;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .tab.active {
-      background: rgba(0, 242, 255, 0.15);
-      border-color: var(--neon-cyan);
-      color: var(--neon-cyan);
-      box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
-    }
-
-    .card {
-      background: var(--bg-panel);
-      border: var(--hud-border);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--neon-gold);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(0, 242, 255, 0.2);
-      border-radius: 10px;
-      color: white;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem;
-    }
-
-    .mission-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 12px;
-      transition: 0.3s;
-    }
-
-    .mission-card.active {
-      border-color: var(--neon-cyan);
-      background: rgba(0, 242, 255, 0.05);
-    }
-
-    .mission-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .mission-toggle {
-      margin-left: auto;
-      transform: scale(1.5);
-      cursor: pointer;
-    }
-
-    .mission-detail {
-      display: none;
-      margin-top: 15px;
-      padding-top: 10px;
-      border-top: 1px dotted rgba(255, 255, 255, 0.1);
-    }
-
-    .score-preview {
-      text-align: center;
-      padding: 20px;
-      border: 1px dashed var(--neon-cyan);
-      border-radius: 12px;
-      margin-top: 20px;
-      background: rgba(0, 242, 255, 0.05);
-    }
-
-    .score-val {
-      display: block;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
-      color: var(--neon-cyan);
-    }
-
-    .btn-primary {
-      width: 100%;
-      padding: 18px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
-      color: white;
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 900;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: 0.3s;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 30px;
-      font-size: 0.7rem;
-      opacity: 0.5;
-    }
-
-    /* Loader */
-    .loader {
-      border: 3px solid rgba(255, 255, 255, 0.2);
-      border-top: 3px solid white;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    #adminContent {
-      display: none;
-    }
-
-    #adminLogin {
-      text-align: center;
-      padding: 40px 0;
-    }
-
-    /* Mission Consent Styles */
-    .mission-consent {
-      margin-top: 24px;
-      padding: 18px;
-      border: 1px solid rgba(0, 255, 255, 0.45);
-      border-radius: 18px;
-      background: rgba(0, 255, 255, 0.06);
-      box-shadow: 0 0 18px rgba(0, 255, 255, 0.12);
-    }
-
-    .mission-consent h3 {
-      margin: 0 0 10px;
-      color: #00f5ff;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1rem;
-    }
-
-    .mission-consent p {
-      color: #d8faff;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .consent-check {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      margin-top: 14px;
-      color: #ffd84d;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .consent-check input {
-      width: 20px;
-      height: 20px;
-      accent-color: #00f5ff;
-      cursor: pointer;
-    }
-  </style>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -314,6 +27,11 @@
         <div class="misi-title">MISI 30 HARI HIDUP SEHAT</div>
       </div>
     </header>
+
+    <!-- Motivation Quote Section -->
+    <div class="quote-box" id="motivationQuote">
+      "Kesehatan adalah investasi terbaik untuk masa depanmu."
+    </div>
 
     <div class="tabs">
       <div id="studentTab" class="tab active" onclick="switchView('student')">Entri Siswa</div>
@@ -455,22 +173,24 @@
     <!-- Section Guru -->
     <section id="adminView" style="display:none;">
       <div id="adminLogin" class="card">
-        <i data-lucide="lock" style="width:48px; height:48px; color:var(--neon-gold); margin-bottom:15px;"></i>
-        <h3 style="margin-bottom:20px; font-family:'Orbitron';">AKSES TERBATAS GURU</h3>
+        <div style="text-align: center; margin-bottom: 20px;">
+          <i data-lucide="lock" style="width:48px; height:48px; color:var(--neon-gold); margin-bottom:15px;"></i>
+          <h3 style="font-family:'Orbitron';">AKSES TERBATAS GURU</h3>
+        </div>
         <input type="password" id="passGuru" placeholder="PASSWORD"
-          style="text-align:center; margin-bottom:20px; max-width:300px; display:inline-block;">
+          style="text-align:center; margin-bottom:20px; max-width:300px; display:block; margin-left: auto; margin-right: auto;">
         <button onclick="loginAdmin()" class="btn-primary"
-          style="max-width:200px; margin-top:0; display:block; margin:auto;">MASUK</button>
+          style="max-width:200px; margin-top:0; display:block; margin-left: auto; margin-right: auto;">MASUK</button>
       </div>
 
-      <div id="adminContent" class="card">
+      <div id="adminContent" class="card" style="display: none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
           <h3 style="font-family:'Orbitron'; font-size:1rem; color:var(--neon-gold);">DASHBOARD MONITORING</h3>
           <button onclick="fetchData()" class="btn-primary"
             style="width:auto; padding:8px 15px; margin-top:0; font-size:0.8rem;">REFRESH</button>
         </div>
         <div id="adminTableContainer" style="overflow-x:auto;">
-          <!-- Data Tabel -->
+          <!-- Data Tabel Akan Muncul Di Sini -->
         </div>
       </div>
     </section>
@@ -481,156 +201,8 @@
     </footer>
   </div>
 
-  <script>
-    // GANTI URL INI DENGAN URL WEB APP GAS ANDA
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwgN3Q01sFrdLM8H_L93Q6elJ14UuBrLXO7KlLnolIItcpJFBqOKeTtFj7SWHzsucYU/exec";
-
-    function switchView(view) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.getElementById(view + 'Tab').classList.add('active');
-      document.getElementById('studentView').style.display = view === 'student' ? 'block' : 'none';
-      document.getElementById('adminView').style.display = view === 'teacher' ? 'block' : 'none';
-    }
-
-    function toggleMisi(misi) {
-      const isChecked = document.getElementById('check' + misi).checked;
-      const detail = document.getElementById('detail' + misi);
-      const card = document.getElementById('card' + misi);
-      if (detail) detail.style.display = isChecked ? 'block' : 'none';
-      if (isChecked) card.classList.add('active'); else card.classList.remove('active');
-      calculateScore();
-    }
-
-    function calculateScore() {
-      let score = 0;
-      if (document.getElementById('checkSarapan').checked) score += 15;
-      if (document.getElementById('checkAir').checked) score += 15;
-      if (document.getElementById('checkOlahraga').checked) score += 20;
-      if (document.getElementById('checkTidur').checked) score += 20;
-      if (document.getElementById('checkManis').checked) score += 15;
-      if (document.getElementById('checkHP').checked) score += 15;
-      
-      document.getElementById('scoreVal').innerText = score;
-
-      // Logika Kategori & Badge
-      let kategori = "Perlu Semangat";
-      let badge = "🥉 Bronze";
-      
-      if (score === 100) {
-        kategori = "Siswa Teladan";
-        badge = "🏆 Diamond";
-      } else if (score >= 80) {
-        kategori = "Sangat Sehat";
-        badge = "🥇 Gold";
-      } else if (score >= 60) {
-        kategori = "Cukup Sehat";
-        badge = "🥈 Silver";
-      }
-
-      return { score, kategori, badge };
-    }
-
-    document.getElementById('missionForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('btnSubmit');
-      const btnText = document.getElementById('btnText');
-      const loader = document.getElementById('loader');
-      const score = calculateScore();
-
-      const kejujuranMisi = document.getElementById("kejujuranMisi");
-      if (!kejujuranMisi.checked) {
-        alert("Centang persetujuan kejujuran sebelum menyimpan misi hari ini.");
-        return;
-      }
-
-      if (score === 0) return alert("Pilih minimal satu misi!");
-      if (document.getElementById('jurnal').value.length < 10) return alert("Jurnal minimal 10 karakter!");
-
-      btn.disabled = true;
-      btnText.innerText = "Mengirim data misi...";
-      loader.style.display = "inline-block";
-
-      const now = new Date();
-      const tanggalStr = now.toISOString().split('T')[0];
-      const idSiswa = document.getElementById('idSiswa').value;
-      const submissionId = tanggalStr + "_" + idSiswa;
-
-      const payload = {
-        submissionId: submissionId,
-        timestamp: now.toLocaleString(),
-        tanggal: tanggalStr,
-        idSiswa: idSiswa,
-        nama: document.getElementById('nama').value,
-        kelas: document.getElementById('kelas').value,
-        sarapan: document.getElementById('checkSarapan').checked ? "Ya" : "Tidak",
-        menuSarapan: document.getElementById('menuSarapan').value,
-        airPutih: document.getElementById('checkAir').checked ? "Ya" : "Tidak",
-        jumlahAirPutih: document.getElementById('jumlahAir').value,
-        olahraga: document.getElementById('checkOlahraga').checked ? "Ya" : "Tidak",
-        jenisOlahraga: document.getElementById('jenisOlahraga').value,
-        tidurCukup: document.getElementById('checkTidur').checked ? "Ya" : "Tidak",
-        jamTidur: document.getElementById('jamTidur').value,
-        jamBangun: document.getElementById('jamBangun').value,
-        kurangiManis: document.getElementById('checkManis').checked ? "Ya" : "Tidak",
-        batasiHP: document.getElementById('checkHP').checked ? "Ya" : "Tidak",
-        skorHarian: score,
-        kategoriSkor: kategori,
-        badgeHarian: badge,
-        mood: "😊",
-        jurnal: document.getElementById('jurnal').value,
-        action: "submit"
-      };
-
-      try {
-        // Post data
-        await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-        alert("Data berhasil disimpan / diperbarui!");
-      } catch (err) {
-        alert("Gagal mengirim data. Periksa koneksi.");
-      } finally {
-        btn.disabled = false;
-        btnText.innerText = "SIMPAN MISI HARI INI";
-        loader.style.display = "none";
-      }
-    };
-
-    function loginAdmin() {
-      if (document.getElementById('passGuru').value === '696969') {
-        document.getElementById('adminLogin').style.display = 'none';
-        document.getElementById('adminContent').style.display = 'block';
-        fetchData();
-      } else {
-        alert("Password Salah!");
-      }
-    }
-
-    async function fetchData() {
-      const container = document.getElementById('adminTableContainer');
-      container.innerHTML = "<p style='text-align:center;'>Memuat data...</p>";
-      try {
-        const res = await fetch(GAS_URL + "?action=getData");
-        const data = await res.json();
-        
-        if (data.length === 0) {
-          container.innerHTML = "<p style='text-align:center; color:var(--neon-gold);'>Belum ada data di sheet MonitoringUtama.</p>";
-          return;
-        }
-
-        let html = "<table style='width:100%; border-collapse:collapse; min-width:400px;'>";
-        html += "<thead><tr><th style='text-align:left; padding:10px; border-bottom:1px solid #333;'>Nama</th><th style='padding:10px; border-bottom:1px solid #333;'>Skor</th><th style='padding:10px; border-bottom:1px solid #333;'>Tanggal</th></tr></thead><tbody>";
-        data.reverse().forEach(row => {
-          const displayScore = row.skor || row.skorharian || 0;
-          html += `<tr><td style='padding:10px; border-bottom:1px solid #222;'>${row.nama || 'Anonim'}</td><td style='text-align:center; color:var(--neon-cyan);'>${displayScore}</td><td style='text-align:center; font-size:0.7rem;'>${row.tanggal || '-'}</td></tr>`;
-        });
-        html += "</tbody></table>";
-        container.innerHTML = html;
-      } catch (err) {
-        container.innerHTML = "<p style='color:red;'>Gagal mengambil data.</p>";
-      }
-    }
-
-    lucide.createIcons();
-  </script>
+  <!-- External JS -->
+  <script src="script.js"></script>
 </body>
 
 </html>

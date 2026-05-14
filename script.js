@@ -1,7 +1,12 @@
-// Configuration
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwfjBXBlmNw_HZyJG0PACpnMltwWKalHTSDuuWHGDGg_-3AJvu2wFx5nfyMAdPUjpDogA/exec";
+/**
+ * SEHATTRACK ESNESABA - Logic V2
+ * Optimized for SMP Negeri 1 Banyubiru
+ */
 
-// Quotes Array
+// Configuration - Ganti URL ini dengan URL Web App GAS Anda
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwgN3Q01sFrdLM8H_L93Q6elJ14UuBrLXO7KlLnolIItcpJFBqOKeTtFj7SWHzsucYU/exec";
+
+// Motivation Quotes
 const QUOTES = [
     "Kesehatan adalah investasi terbaik untuk masa depanmu.",
     "Jadilah versi terbaik dirimu setiap hari.",
@@ -12,85 +17,43 @@ const QUOTES = [
     "Tubuhmu adalah kendaraan misimu di dunia ini. Rawatlah."
 ];
 
-// State Management
-let studentData = JSON.parse(localStorage.getItem('sehatTrack_user')) || null;
-let allRecords = [];
-let isAdminAuthenticated = false;
-
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    setQuote();
-    if (studentData) {
-        document.getElementById('nama').value = studentData.nama;
-        document.getElementById('kelas').value = studentData.kelas;
-        showStats();
+    setRandomQuote();
+    
+    // Load local storage if available
+    const savedUser = JSON.parse(localStorage.getItem('sehatTrack_user'));
+    if (savedUser) {
+        if (document.getElementById('idSiswa')) document.getElementById('idSiswa').value = savedUser.idSiswa || '';
+        if (document.getElementById('nama')) document.getElementById('nama').value = savedUser.nama || '';
+        if (document.getElementById('kelas')) document.getElementById('kelas').value = savedUser.kelas || '';
     }
 
-    // Toggle Menu Sarapan
-    const sarapanSelect = document.getElementById('sarapan');
-    const menuSarapanInput = document.getElementById('menuSarapan');
-    if (sarapanSelect && menuSarapanInput) {
-        const menuGroup = menuSarapanInput.parentElement;
-        const toggleMenu = () => {
-            menuGroup.style.display = sarapanSelect.value === 'Ya' ? 'block' : 'none';
-        };
-        sarapanSelect.addEventListener('change', toggleMenu);
-        toggleMenu();
+    // Initialize Lucide Icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
     }
 });
 
 // View Switcher
 function switchView(view) {
-    const studentTab = document.getElementById('studentTab');
-    const teacherTab = document.getElementById('teacherTab');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(view + 'Tab').classList.add('active');
+    
     const studentView = document.getElementById('studentView');
-    const teacherView = document.getElementById('teacherView');
-
+    const adminView = document.getElementById('adminView');
+    
     if (view === 'student') {
-        studentTab.classList.add('active');
-        teacherTab.classList.remove('active');
         studentView.style.display = 'block';
-        teacherView.style.display = 'none';
+        adminView.style.display = 'none';
     } else {
-        studentTab.classList.remove('active');
-        teacherTab.classList.add('active');
         studentView.style.display = 'none';
-        teacherView.style.display = 'block';
-        
-        if (isAdminAuthenticated) {
-            document.getElementById('teacherLogin').style.display = 'none';
-            document.getElementById('teacherContent').style.display = 'block';
-            fetchTeacherData();
-        } else {
-            document.getElementById('teacherLogin').style.display = 'block';
-            document.getElementById('teacherContent').style.display = 'none';
-        }
+        adminView.style.display = 'block';
     }
 }
 
-// Admin Login Logic
-function checkAdminLogin() {
-    const user = document.getElementById('adminUser').value.trim().toUpperCase();
-    const pass = document.getElementById('adminPass').value.trim();
-
-    if (!user || !pass) {
-        showToast('Kredensial tidak boleh kosong.', 'error');
-        return;
-    }
-
-    if (user === 'MAS FENDI' && pass === '696969') {
-        isAdminAuthenticated = true;
-        document.getElementById('teacherLogin').style.display = 'none';
-        document.getElementById('teacherContent').style.display = 'block';
-        showToast('AKSES DITERIMA. Selamat datang, Admin.', 'success');
-        fetchTeacherData();
-    } else {
-        showToast('AKSES DITOLAK. Nama Pengguna atau Kata Sandi salah.', 'error');
-    }
-}
-
-// Set Random Quote
-function setQuote() {
+// Random Quote
+function setRandomQuote() {
     const quoteElement = document.getElementById('motivationQuote');
     if (quoteElement) {
         const randomIndex = Math.floor(Math.random() * QUOTES.length);
@@ -98,151 +61,191 @@ function setQuote() {
     }
 }
 
+// Toggle Mission Details
+function toggleMisi(misi) {
+    const isChecked = document.getElementById('check' + misi).checked;
+    const detail = document.getElementById('detail' + misi);
+    const card = document.getElementById('card' + misi);
+    
+    if (detail) detail.style.display = isChecked ? 'block' : 'none';
+    if (isChecked) {
+        card.classList.add('active');
+    } else {
+        card.classList.remove('active');
+    }
+    calculateScore();
+}
+
+// Calculate Score & Badge
+function calculateScore() {
+    let score = 0;
+    
+    // Mission points mapping
+    if (document.getElementById('checkSarapan').checked) score += 15;
+    if (document.getElementById('checkAir').checked) score += 15;
+    if (document.getElementById('checkOlahraga').checked) score += 20;
+    if (document.getElementById('checkTidur').checked) score += 20;
+    if (document.getElementById('checkManis').checked) score += 15;
+    if (document.getElementById('checkHP').checked) score += 15;
+    
+    const scoreValElement = document.getElementById('scoreVal');
+    if (scoreValElement) scoreValElement.innerText = score;
+
+    let kategori = "Perlu Semangat";
+    let badge = "🥉 Bronze";
+    
+    if (score === 100) {
+        kategori = "Siswa Teladan";
+        badge = "🏆 Diamond";
+    } else if (score >= 80) {
+        kategori = "Sangat Sehat";
+        badge = "🥇 Gold";
+    } else if (score >= 60) {
+        kategori = "Cukup Sehat";
+        badge = "🥈 Silver";
+    }
+
+    return { score, kategori, badge };
+}
+
 // Form Submission
-document.getElementById('healthForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const loader = document.getElementById('btnLoader');
-    
-    submitBtn.disabled = true;
-    loader.style.display = 'inline-block';
-
-    const formData = {
-        nama: document.getElementById('nama').value,
-        kelas: document.getElementById('kelas').value,
-        sarapan: document.getElementById('sarapan').value,
-        menuSarapan: document.getElementById('menuSarapan').value,
-        airPutih: document.getElementById('airPutih').value,
-        olahraga: document.getElementById('olahraga').value,
-        tidur: document.getElementById('tidur').value,
-        action: 'submit'
-    };
-
-    try {
-        await fetch(GAS_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-
-        showToast('DATA BERHASIL DIUNGGAH. MISI SELESAI.', 'success');
+const missionForm = document.getElementById('missionForm');
+if (missionForm) {
+    missionForm.onsubmit = async (e) => {
+        e.preventDefault();
         
+        const btn = document.getElementById('btnSubmit');
+        const btnText = document.getElementById('btnText');
+        const loader = document.getElementById('loader');
+        
+        // FIX: Extracting values from the result object
+        const { score, kategori, badge } = calculateScore();
+
+        const kejujuranMisi = document.getElementById("kejujuranMisi");
+        if (!kejujuranMisi.checked) {
+            alert("Centang persetujuan kejujuran sebelum menyimpan misi hari ini.");
+            return;
+        }
+
+        if (score === 0) {
+            alert("Pilih minimal satu misi!");
+            return;
+        }
+
+        const jurnalValue = document.getElementById('jurnal').value;
+        if (jurnalValue.length < 10) {
+            alert("Jurnal minimal 10 karakter!");
+            return;
+        }
+
+        // Preparation for submission
+        btn.disabled = true;
+        btnText.innerText = "Mengirim data misi...";
+        loader.style.display = "inline-block";
+
+        const now = new Date();
+        const tanggalStr = now.toISOString().split('T')[0];
+        const idSiswa = document.getElementById('idSiswa').value;
+        const submissionId = tanggalStr + "_" + idSiswa;
+
+        const payload = {
+            submissionId: submissionId,
+            timestamp: now.toLocaleString(),
+            tanggal: tanggalStr,
+            idSiswa: idSiswa,
+            nama: document.getElementById('nama').value,
+            kelas: document.getElementById('kelas').value,
+            sarapan: document.getElementById('checkSarapan').checked ? "Ya" : "Tidak",
+            menuSarapan: document.getElementById('menuSarapan').value,
+            airPutih: document.getElementById('checkAir').checked ? "Ya" : "Tidak",
+            jumlahAirPutih: document.getElementById('jumlahAir').value,
+            olahraga: document.getElementById('checkOlahraga').checked ? "Ya" : "Tidak",
+            jenisOlahraga: document.getElementById('jenisOlahraga').value,
+            tidurCukup: document.getElementById('checkTidur').checked ? "Ya" : "Tidak",
+            jamTidur: document.getElementById('jamTidur').value,
+            jamBangun: document.getElementById('jamBangun').value,
+            kurangiManis: document.getElementById('checkManis').checked ? "Ya" : "Tidak",
+            batasiHP: document.getElementById('checkHP').checked ? "Ya" : "Tidak",
+            skorHarian: score,
+            kategoriSkor: kategori,
+            badgeHarian: badge,
+            mood: "😊",
+            jurnal: jurnalValue,
+            action: "submit"
+        };
+
+        // Save to localStorage
         localStorage.setItem('sehatTrack_user', JSON.stringify({
-            nama: formData.nama,
-            kelas: formData.kelas
+            idSiswa: payload.idSiswa,
+            nama: payload.nama,
+            kelas: payload.kelas
         }));
-        
-        showStats();
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('UNGGAH GAGAL. Periksa koneksi internet.', 'error');
-    } finally {
-        submitBtn.disabled = false;
-        loader.style.display = 'none';
-    }
-});
 
-// Stats Logic
-function showStats() {
-    const statsBox = document.getElementById('userStats');
-    if (statsBox) {
-        statsBox.style.display = 'grid';
-        const mockScore = Math.floor(Math.random() * 800) + 200; 
-        document.getElementById('myScore').innerText = mockScore;
-        renderBadges(mockScore);
+        try {
+            // Post data to GAS
+            await fetch(GAS_URL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify(payload) 
+            });
+            alert("DATA BERHASIL DISIMPAN! Terima kasih sudah jujur hari ini.");
+            // Reset form partly or stay for confirmation
+        } catch (err) {
+            console.error(err);
+            alert("Gagal mengirim data ke cloud. Periksa koneksi internet Anda.");
+        } finally {
+            btn.disabled = false;
+            btnText.innerText = "SIMPAN MISI HARI INI";
+            loader.style.display = "none";
+        }
+    };
+}
+
+// Admin Logic
+function loginAdmin() {
+    const pass = document.getElementById('passGuru').value;
+    if (pass === '696969') {
+        document.getElementById('adminLogin').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        fetchData();
+    } else {
+        alert("Password Salah! Akses ditolak.");
     }
 }
 
-function renderBadges(score) {
-    const badgesBox = document.getElementById('myBadges');
-    if (!badgesBox) return;
+async function fetchData() {
+    const container = document.getElementById('adminTableContainer');
+    container.innerHTML = "<p style='text-align:center; padding: 20px;'>Memindai database...</p>";
     
-    badgesBox.innerHTML = '';
-    if (score >= 100) badgesBox.innerHTML += '<span class="badge" style="color: #cd7f32; border: 1px solid #cd7f32; padding: 2px 8px; font-size: 0.7rem; margin-right: 5px;">ELITE I</span>';
-    if (score >= 500) badgesBox.innerHTML += '<span class="badge" style="color: #c0c0c0; border: 1px solid #c0c0c0; padding: 2px 8px; font-size: 0.7rem; margin-right: 5px;">MASTER II</span>';
-    if (score >= 1000) badgesBox.innerHTML += '<span class="badge" style="color: #ffcc00; border: 1px solid #ffcc00; padding: 2px 8px; font-size: 0.7rem; margin-right: 5px;">GRANDMASTER</span>';
-    
-    if (score < 100) badgesBox.innerHTML = '<span class="badge" style="opacity: 0.5;">WARRIOR</span>';
-}
-
-// Teacher Dashboard Logic
-async function fetchTeacherData() {
-    const tableContainer = document.getElementById('teacherTable');
-    tableContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: #00f2ff; animation: pulse 1s infinite;">MEMINDAI DATABASE...</p>';
-
     try {
-        const response = await fetch(`${GAS_URL}?action=getData`);
-        const data = await response.json();
-        allRecords = data;
+        const res = await fetch(GAS_URL + "?action=getData");
+        const data = await res.json();
         
-        renderTeacherTable(data);
-        updateDashboardStats(data);
+        if (!data || data.length === 0) {
+            container.innerHTML = "<p style='text-align:center; color:var(--neon-gold); padding: 20px;'>Belum ada data monitoring ditemukan.</p>";
+            return;
+        }
+
+        let html = "<table>";
+        html += "<thead><tr><th>NAMA AGEN</th><th>SKOR</th><th>TANGGAL</th></tr></thead><tbody>";
         
-    } catch (error) {
-        tableContainer.innerHTML = '<p style="text-align: center; color: #f56565; padding: 20px;">ERROR PINDAI DATABASE. PERIKSA STATUS API.</p>';
-    }
-}
-
-function renderTeacherTable(data) {
-    const tableContainer = document.getElementById('teacherTable');
-    
-    if (data.length === 0) {
-        tableContainer.innerHTML = '<p style="text-align: center; padding: 20px;">TIDAK ADA DATA MISI DITEMUKAN.</p>';
-        return;
-    }
-
-    let html = `
-        <table style="width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.3); font-size: 0.9rem;">
-            <thead style="background: rgba(0, 242, 255, 0.1);">
-                <tr>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,242,255,0.3); color: #00f2ff;">NAMA AGEN</th>
-                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,242,255,0.3); color: #00f2ff;">REGU/KELAS</th>
-                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid rgba(0,242,255,0.3); color: #ffcc00;">POIN (EXP)</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    data.forEach(item => {
-        html += `
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding: 12px;">${item.nama || '-'}</td>
-                <td style="padding: 12px;">${item.kelas || '-'}</td>
-                <td style="padding: 12px; text-align: center; font-weight: bold; color: #ffcc00;">${item.skor || 0}</td>
-            </tr>
-        `;
-    });
-
-    html += '</tbody></table>';
-    tableContainer.innerHTML = html;
-}
-
-function updateDashboardStats(data) {
-    document.getElementById('totalRespon').innerText = data.length;
-    const uniqueStudents = new Set(data.map(d => d.nama));
-    document.getElementById('totalSiswa').innerText = uniqueStudents.size;
-}
-
-function filterData() {
-    const query = document.getElementById('searchStudent').value.toLowerCase();
-    const filtered = allRecords.filter(item => 
-        (item.nama && item.nama.toLowerCase().includes(query)) || 
-        (item.kelas && item.kelas.toLowerCase().includes(query))
-    );
-    renderTeacherTable(filtered);
-}
-
-// Toast System
-function showToast(message, type) {
-    const toast = document.getElementById('toast');
-    if (toast) {
-        toast.innerText = message;
-        toast.style.borderColor = type === 'success' ? '#00f2ff' : '#f56565';
-        toast.style.color = type === 'success' ? '#00f2ff' : '#f56565';
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        // Sort by date (reverse)
+        data.reverse().forEach(row => {
+            const displayScore = row.skorharian || row.skor || 0;
+            const nama = row.nama || 'Anonim';
+            const tanggal = row.tanggal || '-';
+            
+            html += `<tr>
+                <td>${nama}</td>
+                <td style='color:var(--neon-cyan); font-weight:bold;'>${displayScore}</td>
+                <td style='font-size:0.7rem; opacity:0.7;'>${tanggal}</td>
+            </tr>`;
+        });
+        
+        html += "</tbody></table>";
+        container.innerHTML = html;
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p style='color:red; text-align:center; padding: 20px;'>Gagal mengambil data dari server.</p>";
     }
 }

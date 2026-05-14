@@ -1,6 +1,6 @@
-# SehatTrack Esnesaba - Panduan Setup
+# SehatTrack Esnesaba - Panduan Setup V2
 
-Aplikasi ini adalah sistem monitoring 30 hari hidup sehat untuk siswa SMP Esnesaba. Dibangun menggunakan HTML, CSS modern, dan JavaScript, dengan backend Google Sheets via Google Apps Script (GAS).
+Aplikasi ini adalah sistem monitoring 30 hari hidup sehat untuk siswa SMP Negeri 1 Banyubiru. Dibangun menggunakan HTML5, CSS modern, dan JavaScript, dengan backend Google Sheets via Google Apps Script (GAS).
 
 ## 1. Persiapan Google Sheets & Apps Script
 
@@ -9,37 +9,65 @@ Aplikasi ini memerlukan Google Sheets sebagai database. Ikuti langkah berikut:
 1.  Buka [Google Sheets](https://sheets.new) baru.
 2.  Beri nama file: `SehatTrack_Database`.
 3.  Ubah nama tab bawah dari "Sheet1" menjadi **"Data"**.
-4.  Buat header di baris pertama:
-    `Timestamp | Nama | Kelas | Sarapan | Menu | Air Putih | Olahraga | Tidur | Skor`
+4.  Buat header di baris pertama sesuai urutan berikut:
+    `SubmissionID | Timestamp | Tanggal | ID Siswa | Nama | Kelas | Sarapan | Menu | Air Putih | Gelas | Olahraga | Jenis | Tidur Cukup | Jam Tidur | Jam Bangun | Kurangi Manis | Batasi HP | Skor | Kategori | Badge | Mood | Jurnal`
 5.  Klik menu **Extensions > Apps Script**.
-6.  Hapus semua kode di editor `Code.gs` dan ganti dengan kode berikut:
+6.  Hapus semua kode di editor dan ganti dengan kode backend modern berikut:
 
 ```javascript
+/**
+ * BACKEND SEHATTRACK V2
+ * Simpan kode ini di Google Apps Script editor
+ */
+
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data");
   const data = JSON.parse(e.postData.contents);
   
   if (data.action === 'submit') {
-    // Hitung Skor Sederhana (25 poin per 'Ya')
-    let skor = 0;
-    if (data.sarapan === 'Ya') skor += 25;
-    if (data.airPutih === 'Ya') skor += 25;
-    if (data.olahraga === 'Ya') skor += 25;
-    if (data.tidur === 'Ya') skor += 25;
+    // Cari apakah sudah ada entri untuk ID & Tanggal yang sama (Upsert)
+    const rows = sheet.getDataRange().getValues();
+    let rowIndex = -1;
+    
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i][0] === data.submissionId) {
+        rowIndex = i + 1;
+        break;
+      }
+    }
 
-    sheet.appendRow([
-      new Date(),
+    const newRow = [
+      data.submissionId,
+      data.timestamp,
+      data.tanggal,
+      data.idSiswa,
       data.nama,
       data.kelas,
       data.sarapan,
       data.menuSarapan,
       data.airPutih,
+      data.jumlahAirPutih,
       data.olahraga,
-      data.tidur,
-      skor
-    ]);
+      data.jenisOlahraga,
+      data.tidurCukup,
+      data.jamTidur,
+      data.jamBangun,
+      data.kurangiManis,
+      data.batasiHP,
+      data.skorHarian,
+      data.kategoriSkor,
+      data.badgeHarian,
+      data.mood,
+      data.jurnal
+    ];
 
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", score: skor }))
+    if (rowIndex !== -1) {
+      sheet.getRange(rowIndex, 1, 1, newRow.length).setValues([newRow]);
+    } else {
+      sheet.appendRow(newRow);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
@@ -52,7 +80,11 @@ function doGet(e) {
   const data = rows.map(row => {
     let obj = {};
     header.forEach((key, i) => {
-      if (key) obj[key.toLowerCase().replace(/ /g, "")] = row[i];
+      if (key) {
+        // Konversi header ke camelCase atau lowercase untuk JS
+        const cleanKey = key.toLowerCase().replace(/ /g, "");
+        obj[cleanKey] = row[i];
+      }
     });
     return obj;
   });
@@ -64,27 +96,24 @@ function doGet(e) {
 
 7.  Klik **Deploy > New Deployment**.
 8.  Pilih type: **Web App**.
-9.  Description: `SehatTrack Production`.
-10. Execute as: **Me**.
-11. Who has access: **Anyone** (PENTING!).
-12. Klik **Deploy** dan copy **Web App URL**.
-13. Buka file `script.js` di folder proyek Anda, cari baris `const GAS_URL = "..."`, dan ganti dengan URL yang Anda copy tadi.
+9.  Execute as: **Me**.
+10. Who has access: **Anyone**.
+11. Klik **Deploy** dan copy **Web App URL**.
+12. Buka file `script.js` di folder proyek Anda, cari baris `const GAS_URL = "..."`, dan ganti dengan URL yang Anda copy tadi.
 
-## 2. Deploy ke GitHub Pages
+## 2. Struktur File Proyek
 
-1.  Buat repository baru di GitHub (misal: `sehattrack-esnesaba`).
-2.  Upload file `index.html`, `style.css`, dan `script.js`.
-3.  Buka tab **Settings > Pages**.
-4.  Pada bagian **Build and deployment**, pilih Branch: `main` dan folder: `/(root)`.
-5.  Klik **Save**. Website Anda akan aktif dalam beberapa menit di URL `https://username.github.io/repository-name/`.
+- `index.html`: Struktur utama aplikasi (UI).
+- `style.css`: Desain tema HUD Neon modern.
+- `script.js`: Logika aplikasi, perhitungan skor, dan koneksi database.
 
 ## 3. Fitur Utama
 
--   **Form Siswa**: Validasi input nama dan kelas.
--   **Dashboard Guru**: Melihat total respon, jumlah siswa aktif, dan tabel data yang bisa dicari.
--   **Skor & Badge**: Memberikan apresiasi instan (Bronze, Silver, Gold) berdasarkan aktivitas.
--   **Motivation Quotes**: Pesan penyemangat yang berubah setiap refresh.
--   **Mobile Friendly**: Tampilan responsif yang nyaman dibuka di HP siswa.
+-   **Anti-Duplicate**: Jika siswa mengirim data dua kali di hari yang sama, data lama akan diperbarui (bukan duplikat).
+-   **Auto-Save**: Nama dan Kelas tersimpan otomatis di browser agar tidak perlu mengetik ulang besok.
+-   **Dashboard Guru**: Melihat skor dan progress siswa secara real-time dengan proteksi password.
+-   **Skor & Badge**: Sistem poin (Max 100) dengan tingkatan Bronze hingga Diamond.
+-   **Responsive Design**: Nyaman digunakan di smartphone maupun laptop.
 
 ---
-*Dibuat untuk SMP Esnesaba - Sehat Dimulai dari Kita!*
+*Dikembangkan untuk SMP Negeri 1 Banyubiru oleh Fendi Akhmad, S.Pd.*
