@@ -236,8 +236,10 @@ function closeOverlay() {
 }
 
 function loginAdmin() {
-    const pass = document.getElementById('passGuru').value;
+    const passInput = document.getElementById('passGuru');
+    const pass = passInput.value;
     if (pass === '696969') {
+        passInput.value = ''; // Clear password
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminContent').style.display = 'block';
         fetchData();
@@ -248,22 +250,105 @@ function loginAdmin() {
 
 async function fetchData() {
     const container = document.getElementById('adminTableContainer');
-    container.innerHTML = "<p style='text-align:center;'>Memindai database...</p>";
+    container.innerHTML = `
+        <div style="text-align:center; padding: 40px 20px;">
+            <div class="loader" style="width:40px; height:40px; border-width:4px; border-color:var(--neon-cyan); border-top-color:transparent;"></div>
+            <p style="margin-top:15px; font-family:'Orbitron'; font-size:0.8rem; letter-spacing:1px; color:var(--neon-cyan);">MENGHUBUNGKAN KE DATABASE...</p>
+        </div>
+    `;
+
     try {
-        const res = await fetch(GAS_URL + "?action=getData");
+        // Tambahkan timestamp agar tidak terkena cache browser
+        const res = await fetch(`${GAS_URL}?action=getData&t=${Date.now()}`, {
+            method: 'GET',
+            cache: 'no-store'
+        });
+
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
         const data = await res.json();
-        if (!data || data.length === 0) {
-            container.innerHTML = "<p style='text-align:center;'>Belum ada data.</p>";
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; padding: 40px 20px; border: 1px dashed rgba(255,255,255,0.1); border-radius:12px;">
+                    <i data-lucide="database-zap" style="width:48px; height:48px; color:rgba(255,255,255,0.2); margin-bottom:15px;"></i>
+                    <p style="color:rgba(255,255,255,0.5);">Belum ada data siswa yang masuk.</p>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
             return;
         }
-        let html = "<table><thead><tr><th>NAMA</th><th>SKOR</th><th>TANGGAL</th></tr></thead><tbody>";
-        data.reverse().forEach(row => {
-            const displayScore = row.skor || 0;
-            html += `<tr><td>${row.nama || '-'}</td><td style='color:var(--neon-cyan);'>${displayScore}</td><td>${row.tanggal || row.timestamp || '-'}</td></tr>`;
+
+        // --- ANALISA DATA ---
+        const totalEntri = data.length;
+        const totalSkor = data.reduce((acc, curr) => acc + (parseInt(curr.skor) || 0), 0);
+        const rataRata = (totalSkor / totalEntri).toFixed(1);
+        const hariIni = new Date().toISOString().split('T')[0];
+        const entriHariIni = data.filter(d => (d.tanggal || d.timestamp || '').includes(hariIni)).length;
+
+        let html = `
+            <!-- Quick Stats -->
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:20px;">
+                <div style="background:rgba(0,242,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(0,242,255,0.2); text-align:center;">
+                    <div style="font-size:0.6rem; color:var(--neon-gold); margin-bottom:4px;">TOTAL</div>
+                    <div style="font-family:'Orbitron'; font-size:1.1rem; color:var(--neon-cyan);">${totalEntri}</div>
+                </div>
+                <div style="background:rgba(0,242,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(0,242,255,0.2); text-align:center;">
+                    <div style="font-size:0.6rem; color:var(--neon-gold); margin-bottom:4px;">RATA SKOR</div>
+                    <div style="font-family:'Orbitron'; font-size:1.1rem; color:var(--neon-cyan);">${rataRata}</div>
+                </div>
+                <div style="background:rgba(0,242,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(0,242,255,0.2); text-align:center;">
+                    <div style="font-size:0.6rem; color:var(--neon-gold); margin-bottom:4px;">HARI INI</div>
+                    <div style="font-family:'Orbitron'; font-size:1.1rem; color:var(--neon-cyan);">${entriHariIni}</div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:45%">NAMA</th>
+                        <th style="width:20%; text-align:center;">SKOR</th>
+                        <th style="width:35%; text-align:right;">TANGGAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        // Sort: Terbaru di atas
+        const sortedData = [...data].reverse();
+
+        sortedData.forEach(row => {
+            const displayScore = parseInt(row.skor) || 0;
+            let scoreColor = 'var(--neon-magenta)';
+            if (displayScore === 100) scoreColor = 'var(--neon-cyan)';
+            else if (displayScore >= 80) scoreColor = 'var(--neon-gold)';
+
+            const tglRaw = row.tanggal || row.timestamp || '-';
+            const tglDisplay = tglRaw.split(',')[0].replace('2026-', '').replace('2025-', '');
+
+            html += `
+                <tr>
+                    <td style="font-weight:600; font-size:0.85rem; color:white;">${(row.nama || 'Anonim').toUpperCase()}</td>
+                    <td style="text-align:center; font-family:'Orbitron'; font-weight:900; color:${scoreColor}; font-size:0.9rem;">${displayScore}</td>
+                    <td style="text-align:right; font-size:0.75rem; opacity:0.6;">${tglDisplay}</td>
+                </tr>
+            `;
         });
+
         html += "</tbody></table>";
         container.innerHTML = html;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
     } catch (err) {
-        container.innerHTML = "<p style='color:red;'>Gagal mengambil data.</p>";
+        console.error("Fetch Data Error:", err);
+        container.innerHTML = `
+            <div style="color:var(--neon-magenta); text-align:center; padding: 30px 20px; border: 1px dashed var(--neon-magenta); border-radius: 12px; background:rgba(255,0,255,0.05);">
+                <i data-lucide="alert-triangle" style="width:40px; height:40px; margin-bottom:15px;"></i>
+                <p style="font-weight:bold; font-family:'Orbitron'; font-size:0.8rem; margin-bottom:5px;">GAGAL MENGAMBIL DATA</p>
+                <p style="font-size:0.75rem; opacity:0.8; margin-bottom:20px;">Pastikan Google Sheets sudah dipublikasikan & script sudah dideploy dengan benar.</p>
+                <button onclick="fetchData()" class="btn-primary" style="width:auto; margin:0 auto; padding:8px 20px; font-size:0.7rem;">COBA LAGI</button>
+            </div>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 }
