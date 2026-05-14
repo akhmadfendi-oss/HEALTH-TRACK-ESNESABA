@@ -3,8 +3,8 @@
  * Optimized for SMP Negeri 1 Banyubiru
  */
 
-// Configuration - Ganti URL ini dengan URL Web App GAS Anda
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwgN3Q01sFrdLM8H_L93Q6elJ14UuBrLXO7KlLnolIItcpJFBqOKeTtFj7SWHzsucYU/exec";
+// Configuration - URL Web App GAS Anda (Sudah diperbaiki dari screenshot)
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwFaFZ9F2xtxIc9Iy-6upC4J-_Gg6rT2X9wauqdMuir9A4ahqQ7vH82OHYsrdJp7aJNOg/exec";
 
 // Motivation Quotes
 const QUOTES = [
@@ -118,7 +118,7 @@ if (missionForm) {
         const btnText = document.getElementById('btnText');
         const loader = document.getElementById('loader');
         
-        // FIX: Extracting values from the result object
+        // Extracting values from the result object
         const { score, kategori, badge } = calculateScore();
 
         const kejujuranMisi = document.getElementById("kejujuranMisi");
@@ -189,7 +189,6 @@ if (missionForm) {
                 body: JSON.stringify(payload) 
             });
             alert("DATA BERHASIL DISIMPAN! Terima kasih sudah jujur hari ini.");
-            // Reset form partly or stay for confirmation
         } catch (err) {
             console.error(err);
             alert("Gagal mengirim data ke cloud. Periksa koneksi internet Anda.");
