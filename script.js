@@ -123,7 +123,7 @@ function calculateScore() {
         rankContainer.style.display = 'none';
     }
 
-    return { score, kategori, badge, rankName };
+    return { score, kategori, badge, rankName, pesan };
 }
 
 const missionForm = document.getElementById('missionForm');
@@ -135,7 +135,7 @@ if (missionForm) {
         const btnText = document.getElementById('btnText');
         const loader = document.getElementById('loader');
 
-        const { score, kategori, badge } = calculateScore();
+        const { score, kategori, badge, rankName, pesan } = calculateScore();
 
         const kejujuranMisi = document.getElementById("kejujuranMisi");
         if (!kejujuranMisi.checked) {
