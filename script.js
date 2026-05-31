@@ -4,7 +4,7 @@
  */
 
 // Configuration - URL Web App GAS Anda
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyptcuYQp0t7mBceg6u9xqW7lvAV-Hj8Jrvcl7GSPG_GgxMXpYouRxvKf6ldKw2zHX_9w/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyYCpPkfocILorUBT4ZIu8wViu2xFdDAhU_x7EJO7a92wUoi9Wyg2Yvogye8CnKiROn4g/exec";
 
 // Motivation Quotes
 const QUOTES = [
@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const savedUser = JSON.parse(localStorage.getItem('sehatTrack_user'));
     if (savedUser) {
-        if (document.getElementById('idSiswa')) document.getElementById('idSiswa').value = savedUser.idSiswa || '';
         if (document.getElementById('nama')) document.getElementById('nama').value = savedUser.nama || '';
         if (document.getElementById('kelas')) document.getElementById('kelas').value = savedUser.kelas || '';
     }
@@ -115,8 +114,8 @@ function calculateScore() {
         rankText.innerText = rankName;
         motivationText.innerText = `"${pesan}"`;
         
-        // Warna Dinamis
-        const color = score === 100 ? 'var(--neon-cyan)' : (score >= 80 ? 'var(--neon-gold)' : 'var(--neon-magenta)');
+        // Warna Dinamis Matrix
+        const color = score === 100 ? 'var(--neon-green)' : (score >= 80 ? '#8cff8c' : 'var(--dark-green)');
         rankText.style.color = color;
         motivationText.style.color = color;
     } else if (rankContainer) {
@@ -160,8 +159,6 @@ if (missionForm) {
 
         const now = new Date();
         const tanggalStr = now.toISOString().split('T')[0];
-        const idSiswa = document.getElementById('idSiswa').value;
-        const submissionId = tanggalStr + "_" + idSiswa;
 
         // PAYLOAD DISESUAIKAN AGAR KOLOM 1-9 TETAP SAMA (COMPATIBILITY)
         const payload = {
@@ -176,9 +173,7 @@ if (missionForm) {
             skor: score, // Col 9 (Sama dengan versi lama)
 
             // DATA TAMBAHAN V2 (Mulai Col 10)
-            submissionId: submissionId,
             tanggal: tanggalStr,
-            idSiswa: idSiswa,
             jumlahAirPutih: document.getElementById('jumlahAir').value,
             jenisOlahraga: document.getElementById('jenisOlahraga').value,
             tidurCukup: document.getElementById('checkTidur').checked ? "Ya" : "Tidak",
@@ -194,13 +189,20 @@ if (missionForm) {
         };
 
         localStorage.setItem('sehatTrack_user', JSON.stringify({
-            idSiswa: payload.idSiswa,
             nama: payload.nama,
             kelas: payload.kelas
         }));
 
         try {
-            await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            // Karena GAS Anda menggunakan e.postData, kita gunakan format JSON dengan text/plain
+            await fetch(GAS_URL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            });
             
             // Tampilkan Overlay Kemenangan (Victory)
             const overlay = document.getElementById('successOverlay');
@@ -211,8 +213,8 @@ if (missionForm) {
                 vRank.innerText = rankName;
                 vMsg.innerText = `"${pesan}"`;
                 
-                // Sesuaikan warna rank
-                const color = score === 100 ? 'var(--neon-cyan)' : (score >= 80 ? 'var(--neon-gold)' : 'var(--neon-magenta)');
+                // Sesuaikan warna rank Matrix
+                const color = score === 100 ? 'var(--neon-green)' : (score >= 80 ? '#8cff8c' : 'var(--dark-green)');
                 vRank.style.color = color;
                 vRank.style.textShadow = `0 0 20px ${color}`;
                 
@@ -252,8 +254,8 @@ async function fetchData() {
     const container = document.getElementById('adminTableContainer');
     container.innerHTML = `
         <div style="text-align:center; padding: 40px 20px;">
-            <div class="loader" style="width:40px; height:40px; border-width:4px; border-color:var(--neon-cyan); border-top-color:transparent;"></div>
-            <p style="margin-top:15px; font-family:'Orbitron'; font-size:0.8rem; letter-spacing:1px; color:var(--neon-cyan);">MENGHUBUNGKAN KE DATABASE...</p>
+            <div class="loader" style="width:40px; height:40px; border-width:4px; border-color:var(--neon-green); border-top-color:transparent;"></div>
+            <p style="margin-top:15px; font-family:'VT323', monospace; font-size:1rem; letter-spacing:1px; color:var(--neon-green);">> MENGHUBUNGKAN KE DATABASE_</p>
         </div>
     `;
 
@@ -266,74 +268,137 @@ async function fetchData() {
 
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
-        const data = await res.json();
+        let rawData = await res.json();
+        
+        // --- UNIVERSAL DATA CONNECTOR ---
+        let data = [];
+        if (Array.isArray(rawData)) {
+            data = rawData;
+        } else if (rawData.data && Array.isArray(rawData.data)) {
+            data = rawData.data;
+        } else if (rawData.values && Array.isArray(rawData.values)) {
+            data = rawData.values;
+        } else if (typeof rawData === 'object') {
+            // Coba cari property apapun yang berisi array
+            const firstArrayKey = Object.keys(rawData).find(k => Array.isArray(rawData[k]));
+            if (firstArrayKey) data = rawData[firstArrayKey];
+        }
 
-        if (!data || !Array.isArray(data) || data.length === 0) {
+        if (!data || data.length === 0) {
             container.innerHTML = `
                 <div style="text-align:center; padding: 40px 20px; border: 1px dashed rgba(255,255,255,0.1); border-radius:12px;">
                     <i data-lucide="database-zap" style="width:48px; height:48px; color:rgba(255,255,255,0.2); margin-bottom:15px;"></i>
-                    <p style="color:rgba(255,255,255,0.5);">Belum ada data siswa yang masuk.</p>
+                    <p style="color:rgba(255,255,255,0.5);">Database terhubung, tapi tidak ada data yang ditemukan.</p>
+                    <p style="font-size:0.7rem; opacity:0.4; margin-top:10px;">Format: ${typeof rawData}</p>
                 </div>
             `;
             if (typeof lucide !== 'undefined') lucide.createIcons();
             return;
         }
 
+        // --- PARSING DATA SUPER FLEKSIBEL V2 (Letter-Key Support) ---
+        let processedData = [];
+        let keyNama = '', keySkor = '', keyTgl = '';
+
+        if (data.length > 0) {
+            const firstRow = data[0];
+            const isLetterKeys = Object.keys(firstRow).every(k => k.length <= 2);
+            
+            if (isLetterKeys) {
+                // Kasus: Keys adalah 'a', 'b', 'c'... Baris pertama adalah Header Nama
+                const entries = Object.entries(firstRow);
+                
+                // Cari key mana yang value-nya mengandung kata kunci
+                const findKeyByValue = (words) => {
+                    const match = entries.find(([k, v]) => 
+                        words.some(w => v.toString().toLowerCase().includes(w))
+                    );
+                    return match ? match[0] : null;
+                };
+
+                keyNama = findKeyByValue(['nama', 'name']) || 'b';
+                keySkor = findKeyByValue(['skor', 'score', 'poin', 'point']) || 'i';
+                keyTgl = findKeyByValue(['tanggal', 'timestamp', 'date', 'waktu']) || 'a';
+                
+                // Ambil data mulai dari index 1 (karena index 0 adalah Header)
+                processedData = data.slice(1);
+            } else {
+                // Kasus: Keys sudah berupa nama kolom (timestamp, nama, dll)
+                const headers = Object.keys(firstRow);
+                const findKey = (words) => headers.find(h => words.some(w => String(h).toLowerCase().includes(w))) || words[0];
+                
+                keyNama = findKey(['nama', 'name']);
+                keySkor = findKey(['skor', 'score', 'poin', 'point']);
+                keyTgl = findKey(['tanggal', 'timestamp', 'date', 'waktu']);
+                processedData = data;
+            }
+        }
+
         // --- ANALISA DATA ---
-        const totalEntri = data.length;
-        const totalSkor = data.reduce((acc, curr) => acc + (parseInt(curr.skor) || 0), 0);
+        const totalEntri = processedData.length;
+        const totalSkor = processedData.reduce((acc, curr) => {
+            const s = curr[keySkor] || 0;
+            return acc + (parseInt(s) || 0);
+        }, 0);
+        
         const rataRata = (totalSkor / totalEntri).toFixed(1);
         const hariIni = new Date().toISOString().split('T')[0];
-        const entriHariIni = data.filter(d => (d.tanggal || d.timestamp || '').includes(hariIni)).length;
+        const entriHariIni = processedData.filter(d => {
+            const t = (d[keyTgl] || '').toString();
+            return t.includes(hariIni);
+        }).length;
 
         let html = `
-            <!-- Quick Stats -->
             <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:20px;">
-                <div style="background:rgba(0,242,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(0,242,255,0.2); text-align:center;">
-                    <div style="font-size:0.6rem; color:var(--neon-gold); margin-bottom:4px;">TOTAL</div>
-                    <div style="font-family:'Orbitron'; font-size:1.1rem; color:var(--neon-cyan);">${totalEntri}</div>
+                <div style="background:rgba(0,243,255,0.05); padding:10px; border-radius:4px; border:1px dashed rgba(0,243,255,0.3); text-align:center;">
+                    <div style="font-size:0.7rem; color:#00f3ff; font-family:'Share Tech Mono', monospace; margin-bottom:4px; text-shadow:0 0 5px rgba(0,243,255,0.4);">TOTAL</div>
+                    <div style="font-family:'VT323', monospace; font-size:1.5rem; color:#ffffff; text-shadow:0 0 8px rgba(255,255,255,0.5);">${totalEntri}</div>
                 </div>
-                <div style="background:rgba(0,242,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(0,242,255,0.2); text-align:center;">
-                    <div style="font-size:0.6rem; color:var(--neon-gold); margin-bottom:4px;">RATA SKOR</div>
-                    <div style="font-family:'Orbitron'; font-size:1.1rem; color:var(--neon-cyan);">${rataRata}</div>
+                <div style="background:rgba(0,243,255,0.05); padding:10px; border-radius:4px; border:1px dashed rgba(0,243,255,0.3); text-align:center;">
+                    <div style="font-size:0.7rem; color:#00f3ff; font-family:'Share Tech Mono', monospace; margin-bottom:4px; text-shadow:0 0 5px rgba(0,243,255,0.4);">RATA SKOR</div>
+                    <div style="font-family:'VT323', monospace; font-size:1.5rem; color:#ffffff; text-shadow:0 0 8px rgba(255,255,255,0.5);">${rataRata}</div>
                 </div>
-                <div style="background:rgba(0,242,255,0.05); padding:10px; border-radius:8px; border:1px solid rgba(0,242,255,0.2); text-align:center;">
-                    <div style="font-size:0.6rem; color:var(--neon-gold); margin-bottom:4px;">HARI INI</div>
-                    <div style="font-family:'Orbitron'; font-size:1.1rem; color:var(--neon-cyan);">${entriHariIni}</div>
+                <div style="background:rgba(0,243,255,0.05); padding:10px; border-radius:4px; border:1px dashed rgba(0,243,255,0.3); text-align:center;">
+                    <div style="font-size:0.7rem; color:#00f3ff; font-family:'Share Tech Mono', monospace; margin-bottom:4px; text-shadow:0 0 5px rgba(0,243,255,0.4);">HARI INI</div>
+                    <div style="font-family:'VT323', monospace; font-size:1.5rem; color:#ffffff; text-shadow:0 0 8px rgba(255,255,255,0.5);">${entriHariIni}</div>
                 </div>
             </div>
 
             <table>
                 <thead>
                     <tr>
-                        <th style="width:45%">NAMA</th>
-                        <th style="width:20%; text-align:center;">SKOR</th>
-                        <th style="width:35%; text-align:right;">TANGGAL</th>
+                        <th style="width:45%; color:#00f3ff; text-shadow:0 0 5px rgba(0,243,255,0.3);">NAMA</th>
+                        <th style="width:20%; text-align:center; color:#00f3ff; text-shadow:0 0 5px rgba(0,243,255,0.3);">SKOR</th>
+                        <th style="width:35%; text-align:right; color:#00f3ff; text-shadow:0 0 5px rgba(0,243,255,0.3);">TANGGAL</th>
                     </tr>
                 </thead>
                 <tbody>
         `;
 
         // Sort: Terbaru di atas
-        const sortedData = [...data].reverse();
+        const sortedData = [...processedData].reverse();
 
         sortedData.forEach(row => {
-            const displayScore = parseInt(row.skor) || 0;
-            let scoreColor = 'var(--neon-magenta)';
-            if (displayScore === 100) scoreColor = 'var(--neon-cyan)';
-            else if (displayScore >= 80) scoreColor = 'var(--neon-gold)';
+            const nama = (row[keyNama] || 'Anonim').toString();
+            const displayScore = parseInt(row[keySkor]) || 0;
+            
+            const tglRaw = (row[keyTgl] || '-').toString();
+            let tglDisplay = tglRaw.split(',')[0].replace('2026-', '').replace('2025-', '');
+            if (tglDisplay.includes('T')) tglDisplay = tglDisplay.split('T')[0];
 
-            const tglRaw = row.tanggal || row.timestamp || '-';
-            const tglDisplay = tglRaw.split(',')[0].replace('2026-', '').replace('2025-', '');
+            let scoreColor = '#a8c6e2'; // Light dim blue
+            if (displayScore === 100) scoreColor = '#00f3ff'; // Neon Cyan
+            else if (displayScore >= 80) scoreColor = '#ffffff'; // White
 
             html += `
                 <tr>
-                    <td style="font-weight:600; font-size:0.85rem; color:white;">${(row.nama || 'Anonim').toUpperCase()}</td>
-                    <td style="text-align:center; font-family:'Orbitron'; font-weight:900; color:${scoreColor}; font-size:0.9rem;">${displayScore}</td>
-                    <td style="text-align:right; font-size:0.75rem; opacity:0.6;">${tglDisplay}</td>
+                    <td style="font-weight:600; font-size:0.85rem; color:white;">${nama.toUpperCase()}</td>
+                    <td style="text-align:center; font-family:'Orbitron'; font-weight:900; color:${scoreColor}; font-size:0.9rem; text-shadow:0 0 8px ${scoreColor};">${displayScore}</td>
+                    <td style="text-align:right; font-size:0.75rem; color:#00f3ff; opacity:0.7;">${tglDisplay}</td>
                 </tr>
             `;
         });
+
 
         html += "</tbody></table>";
         container.innerHTML = html;
@@ -342,13 +407,63 @@ async function fetchData() {
     } catch (err) {
         console.error("Fetch Data Error:", err);
         container.innerHTML = `
-            <div style="color:var(--neon-magenta); text-align:center; padding: 30px 20px; border: 1px dashed var(--neon-magenta); border-radius: 12px; background:rgba(255,0,255,0.05);">
+            <div style="color:red; text-align:center; padding: 30px 20px; border: 1px dashed red; border-radius: 4px; background:rgba(255,0,0,0.05);">
                 <i data-lucide="alert-triangle" style="width:40px; height:40px; margin-bottom:15px;"></i>
-                <p style="font-weight:bold; font-family:'Orbitron'; font-size:0.8rem; margin-bottom:5px;">GAGAL MENGAMBIL DATA</p>
+                <p style="font-weight:bold; font-family:'VT323', monospace; font-size:1.2rem; margin-bottom:5px;">> GAGAL MENGAMBIL DATA_</p>
                 <p style="font-size:0.75rem; opacity:0.8; margin-bottom:20px;">Pastikan Google Sheets sudah dipublikasikan & script sudah dideploy dengan benar.</p>
                 <button onclick="fetchData()" class="btn-primary" style="width:auto; margin:0 auto; padding:8px 20px; font-size:0.7rem;">COBA LAGI</button>
             </div>
         `;
         if (typeof lucide !== 'undefined') lucide.createIcons();
     }
+}
+
+// ==========================================
+// MATRIX RAIN ANIMATION LOGIC
+// ==========================================
+const canvas = document.getElementById('matrixRain');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+    const alphabet = katakana + latin + nums;
+
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+
+    const rainDrops = [];
+
+    for(let x = 0; x < columns; x++) {
+        rainDrops[x] = 1;
+    }
+
+    const draw = () => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + 'px monospace';
+
+        for(let i = 0; i < rainDrops.length; i++) {
+            const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+            ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+            
+            if(rainDrops[i] * fontSize > canvas.height && Math.random() > 0.97){
+                rainDrops[i] = 0;
+            }
+            rainDrops[i]++;
+        }
+    };
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    setInterval(draw, 35);
 }

@@ -1,33 +1,33 @@
-<!-- HEALTH TRACK ESNESABA V2.3 - FINAL CLEAN VERSION -->
+<!-- SEHATTRACK V2.2 - FIXED (MATRIX EDITION) -->
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Track Esnesaba - Monitoring Sehat</title>
-  <!-- Google Fonts -->
+  <title>SehatTrack Esnesaba - FIXED</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
-  <!-- Lucide Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- External CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+  <!-- Matrix Background & CRT Overlay -->
+  <canvas id="matrixRain"></canvas>
+  <div class="crt-overlay"></div>
+
   <div class="container">
     <header>
       <div class="header-titles">
         <h2>SMP NEGERI 1 BANYUBIRU</h2>
-        <h1>HEALTH TRACK ESNESABA</h1>
+        <h1 class="glitch-text" data-text="HEALTH TRACK ESNESABA">HEALTH TRACK ESNESABA</h1>
         <div class="misi-title">MISI 30 HARI HIDUP SEHAT SISWA ESNESABA</div>
       </div>
     </header>
 
-    <!-- Motivation Quote Section -->
     <div class="quote-box" id="motivationQuote">
       "Kesehatan adalah investasi terbaik untuk masa depanmu."
     </div>
@@ -37,27 +37,28 @@
       <div id="teacherTab" class="tab" onclick="switchView('teacher')">Kontrol Guru</div>
     </div>
 
-    <!-- Section Siswa -->
     <section id="studentView">
       <form id="missionForm">
         <div class="card">
-          <label>ID SISWA (ABSEN)</label>
-          <input type="text" id="idSiswa" placeholder="Contoh: 8A-01" required>
-          <label style="margin-top: 15px;">NAMA LENGKAP</label>
+          <label>NAMA LENGKAP</label>
           <input type="text" id="nama" placeholder="Nama Sesuai Absen" required>
           <label style="margin-top: 15px;">KELAS / REGU</label>
           <select id="kelas" required>
             <option value="">Pilih Kelas</option>
             <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
             <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
-            <option value="7G">7G</option><option value="8A">8A</option><option value="8B">8B</option>
-            <option value="9A">9A</option><option value="9B">9B</option>
+            <option value="7G">7G</option>
+            <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
+            <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
+            <option value="8G">8G</option>
+            <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
+            <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
+            <option value="9G">9G</option>
           </select>
         </div>
 
         <div class="card">
-          <h3 style="color:var(--neon-gold); font-size:0.9rem; margin-bottom:15px; font-family:'Orbitron';">MISI HARIAN</h3>
-
+          <h3 style="color:var(--neon-green); font-size:1.1rem; margin-bottom:15px; font-family:'VT323', monospace; letter-spacing: 2px;">> MISI HARIAN_</h3>
           <div class="mission-card" id="cardSarapan">
             <div class="mission-header">
               <span>[🍌] Misi Sarapan (15 Poin)</span>
@@ -68,7 +69,6 @@
               <input type="text" id="menuSarapan" placeholder="Makan apa tadi?">
             </div>
           </div>
-
           <div class="mission-card" id="cardAir">
             <div class="mission-header">
               <span>[💧] Misi Air Putih (15 Poin)</span>
@@ -79,7 +79,6 @@
               <input type="number" id="jumlahAir" placeholder="Contoh: 8">
             </div>
           </div>
-
           <div class="mission-card" id="cardOlahraga">
             <div class="mission-header">
               <span>[🏃] Misi Gerak Aktif (20 Poin)</span>
@@ -90,7 +89,6 @@
               <input type="text" id="jenisOlahraga" placeholder="Misal: Lari 30 Menit">
             </div>
           </div>
-
           <div class="mission-card" id="cardTidur">
             <div class="mission-header">
               <span>[🌙] Misi Tidur Cukup (20 Poin)</span>
@@ -104,14 +102,12 @@
               </div>
             </div>
           </div>
-
           <div class="mission-card" id="cardManis">
             <div class="mission-header">
               <span>[🍊] Kurangi Minuman Manis (15 Poin)</span>
               <input type="checkbox" id="checkManis" class="mission-toggle" onchange="toggleMisi('Manis')">
             </div>
           </div>
-
           <div class="mission-card" id="cardHP">
             <div class="mission-header">
               <span>[📵] Batasi HP Malam (15 Poin)</span>
@@ -126,7 +122,7 @@
         </div>
 
         <div class="mission-consent">
-          <h3>Persetujuan Misi Sehat</h3>
+          <h3>> Persetujuan Misi_</h3>
           <p>Isi dengan jujur, karena perubahan terbaik selalu dimulai dari keberanian melihat diri sendiri apa adanya.</p>
           <label class="consent-check">
             <input type="checkbox" id="kejujuranMisi" />
@@ -137,13 +133,13 @@
         <!-- Status Rank & Motivasi (Text Only Version) -->
         <div id="rankContainer" class="rank-container">
           <div id="rankText" class="rank-name">WARRIOR</div>
-          <div id="motivationText" style="color: var(--neon-cyan); margin-top: 10px; font-style: italic; font-size: 1.1rem; line-height: 1.4;">
+          <div id="motivationText" style="color: var(--neon-green); margin-top: 10px; font-style: italic; font-size: 1.1rem; line-height: 1.4;">
             "Ayo mulai hidup sehat hari ini!"
           </div>
         </div>
 
         <div class="score-preview">
-          <span style="font-size: 0.8rem;">PREVIEW SKOR</span>
+          <span style="font-size: 0.8rem; font-family:'Share Tech Mono', monospace;">PREVIEW SKOR</span>
           <span id="scoreVal" class="score-val">0</span>
         </div>
 
@@ -154,20 +150,18 @@
       </form>
     </section>
 
-    <!-- Section Guru -->
     <section id="adminView" style="display:none;">
       <div id="adminLogin" class="card">
         <div style="text-align: center; margin-bottom: 20px;">
-          <i data-lucide="lock" style="width:48px; height:48px; color:var(--neon-gold); margin-bottom:15px;"></i>
-          <h3 style="font-family:'Orbitron';">AKSES GURU</h3>
+          <i data-lucide="lock" style="width:48px; height:48px; color:var(--neon-green); margin-bottom:15px;"></i>
+          <h3 style="font-family:'VT323', monospace; font-size:1.5rem; letter-spacing:2px;">> AKSES GURU_</h3>
         </div>
         <input type="password" id="passGuru" placeholder="PASSWORD" style="text-align:center; margin-bottom:20px; max-width:300px; display:block; margin:auto;">
         <button onclick="loginAdmin()" class="btn-primary" style="max-width:200px; margin:auto; display:block;">MASUK</button>
       </div>
-
       <div id="adminContent" class="card" style="display: none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-          <h3 style="font-family:'Orbitron'; font-size:1rem; color:var(--neon-gold);">DASHBOARD</h3>
+          <h3 style="font-family:'VT323', monospace; font-size:1.5rem; color:var(--neon-green); letter-spacing:2px;">> DASHBOARD_</h3>
           <button onclick="fetchData()" class="btn-primary" style="width:auto; padding:8px 15px; margin-top:0; font-size:0.8rem;">REFRESH</button>
         </div>
         <div id="adminTableContainer" style="overflow-x:auto;"></div>
@@ -180,14 +174,13 @@
     </footer>
 
     <!-- Success Overlay (Full Screen Victory) -->
-    <div id="successOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(6,9,15,0.95); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; backdrop-filter:blur(10px);">
-      <div id="victoryRank" style="font-family:'Orbitron'; font-size:3.5rem; font-weight:900; margin-bottom:20px; text-shadow:0 0 20px var(--neon-cyan);">MYTHIC</div>
-      <div id="victoryMsg" style="color:white; font-size:1.3rem; font-style:italic; max-width:500px; margin-bottom:40px; line-height:1.6;">"Luar biasa! Kamu adalah pahlawan kesehatan sejati."</div>
+    <div id="successOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(2, 6, 2, 0.95); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; backdrop-filter:blur(10px);">
+      <div id="victoryRank" style="font-family:'Orbitron'; font-size:3.5rem; font-weight:900; margin-bottom:20px; text-shadow:0 0 20px var(--neon-green); color:var(--neon-green);">MYTHIC</div>
+      <div id="victoryMsg" style="color:var(--text-light); font-size:1.3rem; font-family:'Share Tech Mono', monospace; font-style:italic; max-width:500px; margin-bottom:40px; line-height:1.6;">"Luar biasa! Kamu adalah pahlawan kesehatan sejati."</div>
       <button onclick="closeOverlay()" class="btn-primary" style="max-width:250px;">SIAP UNTUK ESOK!</button>
     </div>
   </div>
 
-  <!-- External JS -->
   <script src="script.js"></script>
 </body>
 
