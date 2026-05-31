@@ -419,51 +419,122 @@ async function fetchData() {
 }
 
 // ==========================================
-// MATRIX RAIN ANIMATION LOGIC
+// ELEGANT NEON CYBERPUNK RAINING CUBES (HUJAN RUBIK)
 // ==========================================
 const canvas = document.getElementById('matrixRain');
 if (canvas) {
     const ctx = canvas.getContext('2d');
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    let width, height;
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
 
-    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
-    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const nums = '0123456789';
-    const alphabet = katakana + latin + nums;
+    // Elegant Cyberpunk Glass Colors
+    const colors = {
+        cyan: { top: 'rgba(0, 243, 255, 0.15)', left: 'rgba(0, 243, 255, 0.3)', right: 'rgba(0, 243, 255, 0.05)', edge: '#00f3ff' },
+        magenta: { top: 'rgba(255, 0, 255, 0.15)', left: 'rgba(255, 0, 255, 0.3)', right: 'rgba(255, 0, 255, 0.05)', edge: '#ff00ff' },
+        gold: { top: 'rgba(255, 215, 0, 0.15)', left: 'rgba(255, 215, 0, 0.3)', right: 'rgba(255, 215, 0, 0.05)', edge: '#ffd700' },
+        blue: { top: 'rgba(0, 85, 255, 0.15)', left: 'rgba(0, 85, 255, 0.3)', right: 'rgba(0, 85, 255, 0.05)', edge: '#0055ff' }
+    };
 
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
+    let cubes = [];
+    const numCubes = Math.floor(width / 12); // Dynamic based on screen width
 
-    const rainDrops = [];
+    function spawnCube(yOffset) {
+        const types = Object.keys(colors);
+        const cType = types[Math.floor(Math.random() * types.length)];
+        const size = Math.random() * 50 + 15; // Size defines parallax depth
+        
+        return {
+            x: Math.random() * width,
+            y: yOffset !== undefined ? yOffset : (Math.random() * height - height * 2), // Spread high above
+            size: size,
+            speed: (size * 0.03) + Math.random() * 0.8 + 0.5, // Cinematic slow motion
+            color: colors[cType],
+            wobbleSpeed: Math.random() * 0.1, // Faster wobble freq
+            wobbleOffset: Math.random() * Math.PI * 2
+        };
+    }
 
-    for(let x = 0; x < columns; x++) {
-        rainDrops[x] = 1;
+    // Initial spawn
+    for (let i = 0; i < numCubes; i++) {
+        cubes.push(spawnCube(Math.random() * height));
+    }
+
+    let frameCount = 0;
+
+    function drawGlassCube(x, y, size, color) {
+        const w = size;
+        const h = size * 0.5;
+        const depth = size * 0.5;
+        
+        // Top Face
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + w/2, y - h/2);
+        ctx.lineTo(x, y - h); ctx.lineTo(x - w/2, y - h/2); ctx.closePath();
+        ctx.fillStyle = color.top; ctx.fill();
+        ctx.strokeStyle = color.edge; ctx.lineWidth = 1; ctx.stroke();
+        
+        // Left Face
+        ctx.beginPath(); ctx.moveTo(x - w/2, y - h/2); ctx.lineTo(x, y);
+        ctx.lineTo(x, y + depth); ctx.lineTo(x - w/2, y - h/2 + depth); ctx.closePath();
+        ctx.fillStyle = color.left; ctx.fill();
+        ctx.stroke();
+
+        // Right Face
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + w/2, y - h/2);
+        ctx.lineTo(x + w/2, y - h/2 + depth); ctx.lineTo(x, y + depth); ctx.closePath();
+        ctx.fillStyle = color.right; ctx.fill();
+        ctx.stroke();
+
+        // Neon Outer Glow
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = color.edge;
+        ctx.strokeStyle = '#ffffff'; 
+        ctx.lineWidth = size > 40 ? 1.5 : 0.5; // Thicker edge on large cubes
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y - h);
+        ctx.lineTo(x + w/2, y - h/2);
+        ctx.lineTo(x + w/2, y - h/2 + depth);
+        ctx.lineTo(x, y + depth);
+        ctx.lineTo(x - w/2, y - h/2 + depth);
+        ctx.lineTo(x - w/2, y - h/2);
+        ctx.closePath();
+        ctx.stroke();
+        
+        ctx.shadowBlur = 0; // Reset
     }
 
     const draw = () => {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        frameCount++;
+        
+        // Deep elegant dark blue/black background with slight motion blur
+        ctx.fillStyle = 'rgba(2, 4, 15, 0.25)';
+        ctx.fillRect(0, 0, width, height);
 
-        ctx.fillStyle = '#0F0';
-        ctx.font = fontSize + 'px monospace';
+        // Sort cubes by size for parallax (smaller in background, drawn first)
+        cubes.sort((a, b) => a.size - b.size);
 
-        for(let i = 0; i < rainDrops.length; i++) {
-            const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-            ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+        cubes.forEach((c, index) => {
+            // Fall downwards fast
+            c.y += c.speed;
             
-            if(rainDrops[i] * fontSize > canvas.height && Math.random() > 0.97){
-                rainDrops[i] = 0;
+            // Tiny horizontal vibration (wind effect) instead of wide floating
+            let driftX = c.x + Math.sin(frameCount * c.wobbleSpeed + c.wobbleOffset) * (c.size * 0.1);
+
+            // Draw the glass cube
+            drawGlassCube(driftX, c.y, c.size, c.color);
+
+            // Reset when off screen (bottom)
+            if (c.y - c.size > height) {
+                cubes[index] = spawnCube(-c.size * 2 - Math.random() * 300); // Stagger the spawn
             }
-            rainDrops[i]++;
-        }
+        });
     };
 
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
-    setInterval(draw, 35);
+    setInterval(draw, 33);
 }
