@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HEALTH TRACK ESNESABA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Library untuk konversi HTML ke PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #007AFF; /* iOS System Blue */
+      --secondary-color: #5856D6; /* iOS Indigo */
+      --bg-color: #F2F2F7; /* iOS System Background (Light) */
+      --card-bg: rgba(255, 255, 255, 0.7);
+      --text: #000000;
+      --text-muted: #8E8E93; /* iOS Secondary Label */
+      --border: #C6C6C8; /* iOS Separator */
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.08);
+      --radius: 14px;
+      --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --success: #34C759; /* iOS Green */
+      --warning: #FF9500; /* iOS Orange */
+      --danger: #FF3B30; /* iOS Red */
+      --input-bg: #E5E5EA; /* iOS Fill */
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg-color);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .app { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 24px; }
+    
+    h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.5px; font-weight: 700; margin: 0; }
+    
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 16px; }
+    .brand-logo {
+      width: 50px; height: 50px; border-radius: 12px;
+      background: var(--primary-color);
+      display: grid; place-items: center; color: white; font-size: 22px; font-weight: 700;
+      font-family: var(--font-heading);
+    }
+    .brand h1 { font-size: 22px; line-height: 1.1; color: var(--text); font-weight: 700; text-transform: none; letter-spacing: -0.5px; }
+    .brand p { margin: 4px 0 0; color: var(--text-muted); font-size: 13px; font-weight: 400; }
+    
+    .pill {
+      border: none; border-radius: 20px; padding: 8px 16px;
+      font-weight: 600; cursor: pointer; background: rgba(0, 122, 255, 0.1); color: var(--primary-color);
+      font-family: var(--font-body); transition: 0.2s; font-size: 14px;
+    }
+    .pill:hover { background: rgba(0, 122, 255, 0.2); }
+    
+    .card {
+      background: var(--card-bg); border: 1px solid rgba(255,255,255,0.5);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px;
+      animation: fadeIn 0.4s ease both;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    
+    .login-layout { min-height: calc(100vh - 120px); display: grid; place-items: center; }
+    .login-card { width: min(100%, 400px); text-align: center; padding: 40px 30px; border-radius: 24px; }
+    
+    .login-card h2 { font-size: 24px; color: var(--text); font-weight: 700; letter-spacing: -0.5px; text-transform: none; }
+    .login-card .subtitle { color: var(--text-muted); margin: 8px 0 24px; font-size: 15px; font-weight: 400; line-height: 1.4; }
+    
+    .role-tabs { display: flex; gap: 4px; background: var(--input-bg); padding: 4px; border-radius: 9px; margin-bottom: 24px; }
+    .role-tabs button { flex: 1; border: none; border-radius: 7px; padding: 8px; font-weight: 600; cursor: pointer; background: transparent; color: var(--text); font-family: var(--font-body); transition: 0.2s; font-size: 13px; box-shadow: none; }
+    .role-tabs button.active { background: var(--card-bg); color: var(--text); box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04); }
+    
+    label { display: block; text-align: left; font-weight: 500; font-size: 14px; margin: 16px 0 8px; color: var(--text); margin-left: 4px; }
+    input, select, textarea {
+      width: 100%; border: none; border-radius: 10px;
+      padding: 14px 16px; font-family: inherit; font-size: 17px; outline: none; background: var(--input-bg); color: var(--text);
+      transition: 0.2s; font-weight: 400;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      background: #D1D1D6;
+    }
+    input::placeholder, textarea::placeholder { color: #999999; }
+    
+    .btn {
+      border: none; border-radius: 14px; padding: 14px 20px;
+      font-family: var(--font-heading); font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease; font-size: 17px; background: var(--primary-color); color: white;
+      letter-spacing: -0.4px;
+    }
+    .btn:active { transform: scale(0.97); opacity: 0.9; }
+    .btn.primary { background: var(--primary-color); }
+    .btn.warning { background: var(--warning); color: white; }
+    .btn.danger { background: var(--danger); color: white; }
+    .full { width: 100%; }
+    .hidden { display: none !important; }
+    .small { font-size: 13px; color: var(--text-muted); }
+    
+    .notice {
+      background: var(--card-bg); border: none; border-radius: 12px;
+      padding: 14px; font-size: 15px; color: var(--text); text-align: left; margin: 16px 0;
+      font-weight: 400; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .notice.error { color: var(--danger); border-left: 4px solid var(--danger); }
+    .notice.success { color: var(--success); border-left: 4px solid var(--success); }
+    
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;}
+    .dashboard-header h2 { font-size: 28px; color: var(--text); text-transform: none; letter-spacing: -0.5px; }
+    
+    .stat {
+      padding: 16px 20px; border-radius: 18px; background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.5); box-shadow: var(--shadow);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .stat .num { font-size: 34px; font-weight: 700; margin: 4px 0 0; font-family: var(--font-heading); color: var(--text); letter-spacing: -1px; }
+    .stat .label { color: var(--text-muted); font-size: 13px; font-weight: 500; text-transform: none; }
+    
+    .habit-card {
+      border: 1px solid rgba(255,255,255,0.5); background: var(--card-bg); border-radius: 18px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      padding: 16px 20px; transition: 0.2s ease; box-shadow: var(--shadow);
+    }
+    .habit-card:active { transform: scale(0.98); }
+    .habit-head { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
+    .habit-icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: 20px; background: rgba(0, 122, 255, 0.1); color: var(--primary-color); }
+    .habit-title { font-weight: 600; font-family: var(--font-body); font-size: 16px; line-height: 1.3; color: var(--text); text-transform: none; }
+    .habit-score { color: var(--text-muted); font-size: 13px; font-weight: 400; margin-top: 2px; display: block; text-transform: none;}
+    
+    .check-row { display: flex; align-items: center; gap: 12px; background: transparent; border-radius: 0; padding: 12px 4px; margin: 0; border-bottom: 1px solid var(--border); transition: 0.2s; cursor: pointer; }
+    .check-row:last-child { border-bottom: none; }
+    .check-row input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--primary-color); cursor: pointer; border-radius: 12px; }
+    .check-row label { margin: 0; font-weight: 400; cursor: pointer; flex: 1; font-size: 17px; }
+
+    .progress-wrap { background: var(--input-bg); border-radius: 6px; overflow: hidden; height: 8px; margin-top: 10px; }
+    .progress-bar { height: 100%; width: 0%; background: var(--primary-color); border-radius: 6px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      border-radius: 12px; padding: 4px 10px;
+      background: var(--input-bg); color: var(--text-muted); font-weight: 500; font-size: 13px; margin: 4px 2px; letter-spacing: 0; text-transform: none;
+    }
+    .badge.orange { color: var(--warning); background: rgba(255,149,0,0.1); }
+    .badge.red { color: var(--danger); background: rgba(255,59,48,0.1); }
+    .badge.blue { color: var(--primary-color); background: rgba(0,122,255,0.1); }
+    
+    .section-title { margin: 0 0 16px; font-size: 20px; font-weight: 700; border-bottom: none; padding-bottom: 0; color: var(--text); text-transform: none; letter-spacing: -0.5px; }
+    
+    .table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.5); background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--shadow); margin-top: 8px; }
+    table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 15px; vertical-align: middle; }
+    th { background: var(--card-bg); font-weight: 600; font-family: var(--font-body); color: var(--text-muted); font-size: 13px; text-transform: none; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 50; display: none; align-items: center; justify-content: center; padding: 24px; }
+    .modal.show { display: flex; animation: fadeModal 0.2s ease both; }
+    @keyframes fadeModal { from { opacity: 0; } to { opacity: 1; } }
+    .modal-card { width: min(100%, 400px); background: rgba(255,255,255,0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center; animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.5); }
+    @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-card .big { font-size: 40px; margin-bottom: 12px; }
+    .modal-card h3 { margin: 0 0 8px; font-size: 20px; font-family: var(--font-heading); color: var(--text); text-transform: none; letter-spacing: -0.5px; font-weight: 700; }
+    .modal-card p { font-size: 15px; text-align: center; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; }
+    .modal-card ul { text-align: left; color: var(--text); font-size: 15px; line-height: 1.6; padding-left: 20px; }
+    
+    .quote { background: var(--card-bg); border-left: none; padding: 16px; border-radius: 14px; font-weight: 400; text-align: center; font-style: italic; color: var(--text-muted); box-shadow: var(--shadow); margin-bottom: 20px; font-size: 15px; }
+    
+    .lb-row { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border: none; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; margin-bottom: 0; }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-rank { font-size: 17px; font-weight: 600; min-width: 30px; text-align: center; font-family: var(--font-body); color: var(--text-muted); }
+    .lb-name { font-weight: 500; flex: 1; font-size: 17px; text-transform: none; }
+    .lb-score { font-weight: 600; color: var(--text); font-size: 17px; }
+    
+    .insight-item { display: flex; gap: 12px; align-items: center; padding: 12px 16px; border: none; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; margin-bottom: 0; font-size: 15px; line-height: 1.4; }
+    .insight-item:last-child { border-bottom: none; }
+    .insight-icon { font-size: 20px; }
+    
+    .report-header { background: var(--card-bg); color: var(--text); border-radius: 18px; padding: 24px; margin-bottom: 24px; text-align: left; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 4px; border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .report-header h2 { font-size: 28px; color: var(--text); font-weight: 700; letter-spacing: -0.5px; margin: 0; }
+    .report-header p { margin: 0; color: var(--text-muted); font-size: 15px; font-family: var(--font-body); font-weight: 400; }
+    
+    .hero-emoji { font-size: 32px; margin-bottom: 8px; font-family: var(--font-heading); font-weight: 700; color: var(--primary-color); }
+
+    @media print {
+      body { background: white; color: black; }
+      .no-print, .topbar, .btn, .role-tabs { display: none !important; }
+      .app { max-width: none; padding: 0; }
+      .card, .stat, .habit-card, .table-wrap, .report-header { box-shadow: none; border: 1px solid #ccc; background: white; color: black; }
+      h1, h2, h3, h4 { color: black; text-transform: none; }
+      .stat .num, .habit-title, .lb-name, .lb-score { color: black; }
+      .progress-wrap { background: #eee; border: 1px solid #ccc; box-shadow: none; }
+      .progress-bar { background: #555; box-shadow: none; }
+      .badge { border: 1px solid #555; color: #333; background: #eee; box-shadow: none; }
+    }
+    
+    @media (max-width: 820px) {
+      .grid.two, .grid.three { grid-template-columns: 1fr; }
+      .dashboard-header { flex-direction: column; align-items: flex-start; text-align: left; gap: 16px; }
+      .topbar { flex-direction: column; align-items: center; text-align: center; padding-bottom: 20px; gap: 16px; }
+      .brand { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+      .brand h1 { font-size: 22px; }
+      .login-card { padding: 32px 20px; border-radius: 20px; box-shadow: none; background: transparent; width: 100%; max-width: 100%; }
+      .login-card h2 { font-size: 24px; }
+      .hero-emoji { font-size: 32px; }
+      .app { padding: 16px; }
+      .card { padding: 20px; border-radius: 20px; }
+      label { text-align: left; }
+      input, select, textarea { text-align: left; }
+      .notice { text-align: left; }
+      .stat { padding: 16px; }
+      .habit-card { padding: 16px; }
+    }
+    /* Nutrifood Rain Animation */
+    .nutri-rain {
+      position: absolute;
+      top: -100px;
+      pointer-events: none;
+      animation: fall linear infinite;
+      opacity: 0.5;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar no-print">
+    <div class="brand">
+      <div class="brand-logo">HT</div>
+      <div>
+        <h1>HEALTH TRACK ESNESABA</h1>
+        <p>Program 30 Hari Hidup Sehat Bersama • SMP NEGERI 1 BANYUBIRU</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span id="dayCounter" class="badge blue hidden"></span>
+      <button class="pill" onclick="logout()">[ LOGOUT ]</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
+  <section id="loginPage" class="login-layout">
+    <div class="card login-card">
+      <div class="hero-emoji">[ LOGIN_PORTAL ]</div>
+      <h2>AUTHENTICATION REQUIRED</h2>
+      <p class="subtitle">Akses sistem pemantauan kesehatan harian. Isi data dengan valid.</p>
+
+      <div class="role-tabs">
+        <button id="studentTab" class="active" onclick="setRole('student')">Siswa</button>
+        <button id="teacherTab" onclick="setRole('teacher')">Guru</button>
+      </div>
+
+      <div id="studentLoginBox">
+        <label for="studentId">Nama Siswa</label>
+        <input id="studentId" placeholder="Contoh: Budi Santoso" autocomplete="off" />
+
+        <label for="classCode">Kelas</label>
+        <select id="classCode">
+          <option value="">-- PILIH KELAS --</option>
+          <option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>7E</option><option>7F</option><option>7G</option>
+          <option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>8E</option><option>8F</option><option>8G</option>
+          <option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option>
+        </select>
+
+        <div class="notice">
+          <strong>Persetujuan data:</strong><br>
+          Data yang saya isi digunakan untuk monitoring program hidup sehat sekolah, bukan untuk menghukum atau mempermalukan siswa.
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" id="consentCheck" />
+          <label for="consentCheck">Saya memahami dan setuju mengisi data dengan jujur.</label>
+        </div>
+
+        <button class="btn primary full" style="margin-top:12px;" onclick="studentLogin()">CONNECT AS STUDENT</button>
+      </div>
+
+      <div id="teacherLoginBox" class="hidden">
+        <label for="teacherCode">Kode Akses Guru</label>
+        <input id="teacherCode" type="password" placeholder="Enter override code" />
+        <button class="btn primary full" style="margin-top:12px;" onclick="teacherLogin()">INITIATE DASHBOARD</button>
+        <p class="small">Dashboard guru dilindungi enskripsi agar data siswa tetap aman.</p>
+      </div>
+
+      <div id="loginMessage"></div>
+
+      <div class="quote" style="margin-top:16px;">> "Sehat hari ini, hebat esok hari."</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ STUDENT DASHBOARD ═══════════════════════════ -->
+  <section id="studentPage" class="hidden">
+    <div class="dashboard-header">
+      <div>
+        <h2 id="studentGreeting">Halo, USER!</h2>
+        <p class="small" id="studentMeta">Tanggal hari ini</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn" onclick="checkTodayStatus()">[ CEK DATA ]</button>
+        <button class="btn warning" onclick="showGuide('student')">[ PANDUAN ]</button>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3 class="section-title">PROGRESS SKOR HARI INI</h3>
+        <div class="progress-wrap">
+          <div id="scoreProgress" class="progress-bar"></div>
+        </div>
+        <p>
+          <span class="badge" id="scoreBadge">SYS.SCORE: 0</span>
+          <span class="badge blue" id="categoryBadge">STATUS: -</span>
+        </p>
+        <p class="small">Skor bukan nilai hukuman. Skor membantu sistem melihat proses perubahan kebiasaan sehatmu.</p>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">TARGET PRIBADI MINGGUAN</h3>
+        <select id="weeklyTarget">
+          <option value="">-- PILIH TARGET --</option>
+          <option>Tidur lebih cepat (sebelum pkl 21.30)</option>
+          <option>Minum air putih lebih banyak (min. 8 gelas)</option>
+          <option>Mengurangi minuman manis</option>
+          <option>Lebih rajin olahraga (min. 30 menit/hari)</option>
+          <option>Tidak main HP sebelum tidur</option>
+          <option>Sarapan setiap pagi</option>
+          <option>Makan buah dan sayur setiap hari</option>
+        </select>
+        <p class="small">Fokus pada satu perubahan kecil yang berarti setiap minggunya.</p>
+
+        <div id="streakBox" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3 class="section-title">CHECKLIST KEBIASAAN SEHAT HARIAN</h3>
+      <p class="small">Isi dengan jujur. Konsisten lebih penting daripada sempurna.</p>
+
+      <div id="habitList" class="grid two"></div>
+
+      <div class="grid two" style="margin-top:16px;">
+        <div>
+          <label for="mood">MOOD HARI INI</label>
+          <select id="mood">
+            <option value="">-- SELECT MOOD --</option>
+            <option>Semangat</option>
+            <option>Biasa</option>
+            <option>Lelah</option>
+            <option>Kurang semangat</option>
+          </select>
+        </div>
+        <div>
+          <label for="honestyCheck">KOMITMEN KEJUJURAN</label>
+          <div class="check-row">
+            <input type="checkbox" id="honestyCheck" />
+            <label for="honestyCheck">Saya mengisi data ini dengan jujur.</label>
+          </div>
+        </div>
+      </div>
+
+      <label for="journal">JURNAL REFLEKSI SINGKAT</label>
+      <textarea id="journal" placeholder="Contoh: Hari ini saya masih sulit tidur cepat karena main HP malam. Besok saya akan coba taruh HP di luar kamar."></textarea>
+
+      <div class="grid two" style="margin-top:16px;">
+        <button id="submitBtn" class="btn primary full" onclick="submitDailyData()">> TRANSMIT DATA</button>
+        <button id="editBtn" class="btn warning full hidden" onclick="enableEdit()">> OVERRIDE DATA</button>
+      </div>
+
+      <div id="studentMessage" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3 class="section-title">HISTORI 7 HARI TERAKHIR</h3>
+      <canvas id="studentChart" style="max-height:200px;"></canvas>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ TEACHER DASHBOARD ═══════════════════════════ -->
+  <section id="teacherPage" class="hidden">
+    <div class="dashboard-header">
+      <div>
+        <h2>TEACHER DASHBOARD</h2>
+        <p class="small">Monitoring keterlaksanaan program hidup sehat siswa.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn warning" onclick="showGuide('teacher')">[ PANDUAN ]</button>
+        <button class="btn primary" onclick="showReportPage()">[ LAPORAN NPET ]</button>
+        <button class="btn danger" onclick="resetAllData()">[ SYSTEM FORMAT ]</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="section-title">DATA FILTER</h3>
+      <div class="grid three">
+        <div>
+          <label for="filterDate">TANGGAL</label>
+          <input id="filterDate" type="date" />
+        </div>
+        <div>
+          <label for="filterClass">KELAS</label>
+          <select id="filterClass">
+            <option value="">ALL CLASSES</option>
+            <option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>7E</option><option>7F</option><option>7G</option>
+            <option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>8E</option><option>8F</option><option>8G</option>
+            <option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn primary full" onclick="loadTeacherDashboard()">> EXECUTE QUERY</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid three" style="margin-top:16px;">
+      <div class="stat">
+        <div class="label">Total Siswa Terdaftar</div>
+        <div class="num" id="statTotalStudents">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Sudah Mengisi Hari Ini</div>
+        <div class="num" id="statSubmitted">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Belum Mengisi</div>
+        <div class="num" id="statNotSubmitted">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Persentase Pengisian</div>
+        <div class="num" id="statPercentage">0%</div>
+      </div>
+      <div class="stat">
+        <div class="label">Rata-rata Skor Kelas</div>
+        <div class="num" id="statAvgScore">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Status Program</div>
+        <div class="num" id="statProgramStatus" style="font-size:18px;">-</div>
+      </div>
+    </div>
+
+    <div class="grid two" style="margin-top:16px;">
+      <div class="card">
+        <h3 class="section-title">GRAFIK RATA-RATA SKOR</h3>
+        <canvas id="scoreChart"></canvas>
+      </div>
+      <div class="card">
+        <h3 class="section-title">GRAFIK KETERLAKSANAAN</h3>
+        <canvas id="submitChart"></canvas>
+      </div>
+    </div>
+
+    <div class="grid two" style="margin-top:16px;">
+      <div class="card">
+        <h3 class="section-title">TOP 5 PEJUANG SEHAT</h3>
+        <div id="leaderboard">
+          <p class="small">Waiting for query...</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">ANALISIS KEBIASAAN KELAS</h3>
+        <div id="analysisContent">
+          <p class="small">Waiting for query...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <h3 class="section-title" style="margin:0;">DATA PENGISIAN SISWA</h3>
+        <button class="btn" onclick="exportCSV()">[ EXPORT CSV ]</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Siswa</th>
+              <th>Kelas</th>
+              <th>Tanggal</th>
+              <th>Waktu</th>
+              <th>Skor</th>
+              <th>Kategori</th>
+              <th>Mood</th>
+              <th>Kebiasaan</th>
+              <th>Refleksi</th>
+            </tr>
+          </thead>
+          <tbody id="studentTable">
+            <tr><td colspan="9" style="text-align:center;color:var(--text-muted);">NULL RECORD</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ LAPORAN NPET ═══════════════════════════ -->
+  <section id="reportPage" class="hidden">
+    <div class="dashboard-header no-print">
+      <div>
+        <h2>LAPORAN NPET</h2>
+        <p class="small">Narasi Perkembangan Efektivitas Terlaksana — Program 30 Hari Hidup Sehat</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn" onclick="showTeacher()">[ BACK ]</button>
+        <button class="btn primary" onclick="window.print()">[ PRINT ]</button>
+        <button class="btn warning" onclick="exportPDF()">[ SIMPAN PDF ]</button>
+        <button class="btn warning" onclick="exportWord()">[ SIMPAN WORD ]</button>
+      </div>
+    </div>
+
+    <div class="print-area" id="reportContent">
+      <div class="report-header">
+        <h2 style="margin: 0 0 10px; border-bottom: 2px solid var(--neon-green); padding-bottom: 10px; display: inline-block;">Laporan NPET — Program 30 Hari Hidup Sehat</h2>
+        <p style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">SMP Esnesaba</p>
+        <p>Tanggal Laporan: <span id="reportDate"></span></p>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 class="section-title">A. Ringkasan Eksekutif</h3>
+        <div id="reportSummary"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 class="section-title">B. Data Statistik Program</h3>
+        <div class="grid three">
+          <div class="stat"><div class="label">Total Siswa</div><div class="num" id="rTotalStudents">-</div></div>
+          <div class="stat"><div class="label">Total Entri</div><div class="num" id="rTotalEntries">-</div></div>
+          <div class="stat"><div class="label">Rata-rata Skor</div><div class="num" id="rAvgScore">-</div></div>
+          <div class="stat"><div class="label">Siswa Kategori Sehat</div><div class="num" id="rHealthy">-</div></div>
+          <div class="stat"><div class="label">Kebiasaan Terpopuler</div><div class="num" id="rTopHabit" style="font-size:16px;">-</div></div>
+          <div class="stat"><div class="label">Kebiasaan Tersulit</div><div class="num" id="rHardHabit" style="font-size:16px;">-</div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 class="section-title">C. Analisis Keterlaksanaan per Kebiasaan</h3>
+        <div id="reportHabitAnalysis"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 class="section-title">D. Distribusi Kategori Siswa</h3>
+        <div id="reportCategoryDist"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 class="section-title">E. Rekomendasi Tindak Lanjut</h3>
+        <div id="reportRecommendations"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">F. Kesimpulan &amp; Pengesahan</h3>
+        <div id="reportConclusion"></div>
+        <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;">
+          <div style="text-align:center;">
+            <p style="margin:0;font-size:14px;color:var(--text);"><br>Mengetahui,<br>Kepala Sekolah</p>
+            <div style="height:80px; margin:16px 0;"></div>
+            <p style="margin:0;font-size:14px; font-weight: bold; text-decoration: underline;">Dra.Sriyatun,M.Si</p>
+          </div>
+          <div style="text-align:center;">
+            <p style="margin:0;font-size:14px;color:var(--text);">Banyubiru, <span id="sigDate"></span><br>Mengetahui,<br>Guru PJOK</p>
+            <div style="height:80px; margin:16px 0;"></div>
+            <p style="margin:0;font-size:14px; font-weight: bold; text-decoration: underline;">Fendi Akhmad,S.Pd</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════ MODAL PANDUAN ═══════════════════════════ -->
+<div id="guideModal" class="modal">
+  <div class="modal-card">
+    <div class="big" id="guideIcon">SYS.HELP</div>
+    <h3 id="guideTitle">PANDUAN</h3>
+    <div id="guideBody"></div>
+    <button class="btn primary full" style="margin-top:16px;" onclick="closeModal('guideModal')">[ ACKNOWLEDGE ]</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL SELAMAT ═══════════════════════════ -->
+<div id="celebModal" class="modal">
+  <div class="modal-card">
+    <div class="big">TRANSMISSION OK</div>
+    <h3>Data Terkirim!</h3>
+    <p style="text-align:center;" id="celebMsg">Sistem telah merekam checklist hari ini.</p>
+    <div class="quote" style="margin:12px 0;" id="dailyQuote"></div>
+    <button class="btn primary full" style="margin-top:12px;" onclick="closeModal('celebModal')">[ CONTINUE ]</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL KONFIRMASI RESET ═══════════════════════════ -->
+<div id="resetModal" class="modal">
+  <div class="modal-card">
+    <div class="big" style="color:#E74C3C; text-shadow: 0 0 15px #E74C3C;">CRITICAL WARNING</div>
+    <h3 style="color:#E74C3C;">RESET ALL DATA?</h3>
+    <p style="text-align:center;">Tindakan ini akan menghapus seluruh data secara permanen dari sistem. Tindakan ini tidak dapat di-undo.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+      <button class="btn full" onclick="closeModal('resetModal')">[ ABORT ]</button>
+      <button class="btn danger full" onclick="confirmReset()">[ EXECUTE PURGE ]</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ JAVASCRIPT ═══════════════════════════ -->
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const TEACHER_CODE = "GURU2024";
+const PROGRAM_START = "2025-01-06"; // Ganti sesuai tanggal program dimulai
+
+const HABITS = [
+  { id: "air",      icon: "💧", label: "Minum 8 gelas air putih",        pts: 10, placeholder: "Contoh: Cuma 5 gelas" },
+  { id: "buah",     icon: "🍎", label: "Makan buah atau sayur",           pts: 10, placeholder: "Contoh: Apel & bayam" },
+  { id: "olahraga", icon: "🏃‍♂️", label: "Olahraga / aktivitas fisik MINIMAL 30 MENIT SEHARI", pts: 15, placeholder: "Contoh: Lari 30 menit" },
+  { id: "tidur",    icon: "🛌", label: "Tidur cukup 7–9 jam",             pts: 15, placeholder: "Contoh: 7 jam" },
+  { id: "jajan",    icon: "🍔", label: "Mengurangi makanan banyak gula & garam", pts: 10, placeholder: "Contoh: Tidak jajan manis" },
+  { id: "cuci",     icon: "🧼", label: "Cuci tangan sebelum makan",        pts: 10, placeholder: "Catatan opsional..." },
+  { id: "sarapan",  icon: "🍳", label: "Sarapan pagi",                    pts: 10, placeholder: "Contoh: Nasi dan sayur" },
+  { id: "screen",   icon: "📵", label: "Pemakaian HP < 2 jam",             pts: 10, placeholder: "Contoh: 1.5 jam" },
+  { id: "begadang", icon: "🌙", label: "Tidak begadang larut malam",      pts: 10, placeholder: "Contoh: Tidur jam 21:00" },
+];
+
+const QUOTES = [
+  "> System log: Satu langkah kecil hari ini, satu lompatan besar ke depan.",
+  "> System log: Kebiasaan sehat dimulai dari pilihan kecil setiap hari.",
+  "> System log: Kamu lebih kuat dari alasanmu untuk menyerah.",
+  "> System log: Tubuh sehat, pikiran jernih, performa maksimal.",
+  "> System log: Konsistensi adalah kunci keberhasilan protokol ini.",
+  "> System log: Hidrasi optimal terdeteksi. Lanjutkan.",
+  "> System log: Nutrisi yang baik = peningkatan efisiensi sistem.",
+  "> System log: Mode istirahat sangat penting untuk pemulihan data.",
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentUser = null;
+let currentRole = null;
+let scoreChartObj = null;
+let submitChartObj = null;
+let studentChartObj = null;
+let editMode = false;
+
+// ─── DATA (localStorage) ──────────────────────────────────────────────────────
+function getData() {
+  return JSON.parse(localStorage.getItem("healthtrack_data") || "{}");
+}
+
+function saveData(d) {
+  localStorage.setItem("healthtrack_data", JSON.stringify(d));
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function formatDate(str) {
+  if (!str) return "";
+  const d = new Date(str + "T00:00:00");
+  return d.toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+}
+
+function studentDay(id) {
+  const data = getData();
+  const subs = data[id] && data[id].submissions ? Object.keys(data[id].submissions).length : 0;
+  const hasToday = data[id] && data[id].submissions && data[id].submissions[todayStr()];
+  const day = subs + (hasToday ? 0 : 1);
+  return Math.max(1, Math.min(day, 30));
+}
+
+// ─── SCORING ──────────────────────────────────────────────────────────────────
+function calcScore(checkedIds) {
+  return HABITS.reduce((s, h) => s + (checkedIds.includes(h.id) ? h.pts : 0), 0);
+}
+
+function scoreCategory(score) {
+  if (score >= 85) return { label: "EXCELLENT", color: "green" };
+  if (score >= 70) return { label: "GOOD", color: "green" };
+  if (score >= 50) return { label: "FAIR", color: "orange" };
+  if (score >= 30) return { label: "WARNING", color: "orange" };
+  return { label: "CRITICAL", color: "red" };
+}
+
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
+function setRole(role) {
+  document.getElementById("studentTab").classList.toggle("active", role === "student");
+  document.getElementById("teacherTab").classList.toggle("active", role === "teacher");
+  document.getElementById("studentLoginBox").classList.toggle("hidden", role !== "student");
+  document.getElementById("teacherLoginBox").classList.toggle("hidden", role !== "teacher");
+  document.getElementById("loginMessage").innerHTML = "";
+}
+
+function showMsg(elId, msg, type = "notice") {
+  document.getElementById(elId).innerHTML = `<div class="notice ${type === "error" ? "error" : type === "success" ? "success" : ""}">${msg}</div>`;
+}
+
+function studentLogin() {
+  const id = document.getElementById("studentId").value.trim().toUpperCase();
+  const cls = document.getElementById("classCode").value.trim().toUpperCase();
+  const consent = document.getElementById("consentCheck").checked;
+
+  if (!id) return showMsg("loginMessage", "ERROR: Nama Siswa kosong.", "error");
+  if (!cls) return showMsg("loginMessage", "ERROR: Kelas kosong.", "error");
+  if (!consent) return showMsg("loginMessage", "ERROR: Persetujuan tidak dicentang.", "error");
+
+  const data = getData();
+  if (!data[id]) {
+    data[id] = { classCode: cls, submissions: {}, target: "" };
+    saveData(data);
+  } else if (data[id].classCode !== cls) {
+    return showMsg("loginMessage", "ERROR: Mismatch data antara Nama Siswa dan Kelas.", "error");
+  }
+
+  currentUser = id;
+  currentRole = "student";
+  showStudentPage();
+}
+
+function teacherLogin() {
+  const code = document.getElementById("teacherCode").value;
+  if (code !== TEACHER_CODE) return showMsg("loginMessage", "ACCESS DENIED: Invalid code.", "error");
+  currentRole = "teacher";
+  showTeacher();
+}
+
+function logout() {
+  currentUser = null;
+  currentRole = null;
+  editMode = false;
+  hideAll();
+  document.getElementById("loginPage").classList.remove("hidden");
+  document.getElementById("dayCounter").classList.add("hidden");
+  document.getElementById("teacherCode").value = "";
+  document.getElementById("studentId").value = "";
+  document.getElementById("classCode").value = "";
+  document.getElementById("consentCheck").checked = false;
+  document.getElementById("loginMessage").innerHTML = "";
+}
+
+// ─── STUDENT PAGE ─────────────────────────────────────────────────────────────
+function showStudentPage() {
+  hideAll();
+  document.getElementById("studentPage").classList.remove("hidden");
+
+  const day = studentDay(currentUser);
+  document.getElementById("dayCounter").textContent = `HARI KE-${day} / 30`;
+  document.getElementById("dayCounter").classList.remove("hidden");
+  document.getElementById("studentGreeting").textContent = `Halo, ${currentUser}!`;
+  document.getElementById("studentMeta").textContent = formatDate(todayStr()) + ` — Hari ke-${day} dari 30`;
+
+  buildHabitList();
+  checkTodayStatus();
+  renderStudentChart();
+  renderStreak();
+}
+
+function buildHabitList() {
+  const container = document.getElementById("habitList");
+  container.innerHTML = "";
+  HABITS.forEach(h => {
+    const card = document.createElement("div");
+    card.className = "habit-card";
+    card.innerHTML = `
+      <div class="habit-head">
+        <div class="habit-icon">${h.icon}</div>
+        <div>
+          <div class="habit-title">${h.label}</div>
+          <div class="habit-score">+${h.pts} pts</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="habit_${h.id}" onchange="updateLiveScore()" />
+        <label for="habit_${h.id}">Sudah dilakukan</label>
+      </div>
+      <input type="text" id="detail_${h.id}" placeholder="${h.placeholder || 'Catatan tambahan...'}" style="margin-top: 10px; font-size: 14px; padding: 10px; width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;" />
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateLiveScore() {
+  const checked = HABITS.filter(h => {
+    const el = document.getElementById("habit_" + h.id);
+    return el && el.checked;
+  }).map(h => h.id);
+  const score = calcScore(checked);
+  const cat = scoreCategory(score);
+  const pct = score;
+  document.getElementById("scoreProgress").style.width = pct + "%";
+  document.getElementById("scoreBadge").textContent = `SYS.SCORE: ${score}`;
+  document.getElementById("categoryBadge").textContent = cat.label;
+  document.getElementById("categoryBadge").className = "badge " + (cat.color === "orange" ? "orange" : cat.color === "red" ? "red" : "blue");
+}
+
+function checkTodayStatus() {
+  const data = getData();
+  const today = todayStr();
+  const sub = data[currentUser] && data[currentUser].submissions && data[currentUser].submissions[today];
+  if (sub) {
+    loadSubmissionToForm(sub);
+    document.getElementById("submitBtn").classList.add("hidden");
+    document.getElementById("editBtn").classList.add("hidden");
+    showMsg("studentMessage", `SUCCESS: Anda sudah mengisi data hari ini. Sampai jumpa besok! Skor Anda: <strong>${sub.score}</strong>`, "success");
+    setFormDisabled(true);
+    editMode = false;
+  } else {
+    document.getElementById("submitBtn").classList.remove("hidden");
+    document.getElementById("editBtn").classList.add("hidden");
+    document.getElementById("studentMessage").innerHTML = "";
+    setFormDisabled(false);
+  }
+}
+
+function loadSubmissionToForm(sub) {
+  HABITS.forEach(h => {
+    const el = document.getElementById("habit_" + h.id);
+    if (el) el.checked = sub.habits.includes(h.id);
+    const detail = document.getElementById("detail_" + h.id);
+    if (detail && sub.habitDetails && sub.habitDetails[h.id]) {
+      detail.value = sub.habitDetails[h.id];
+    } else if (detail) {
+      detail.value = "";
+    }
+  });
+  document.getElementById("mood").value = sub.mood || "";
+  document.getElementById("journal").value = sub.journal || "";
+  document.getElementById("weeklyTarget").value = sub.target || "";
+  document.getElementById("honestyCheck").checked = true;
+  updateLiveScore();
+}
+
+function setFormDisabled(disabled) {
+  HABITS.forEach(h => {
+    const el = document.getElementById("habit_" + h.id);
+    if (el) el.disabled = disabled;
+    const detail = document.getElementById("detail_" + h.id);
+    if (detail) detail.disabled = disabled;
+  });
+  document.getElementById("mood").disabled = disabled;
+  document.getElementById("journal").disabled = disabled;
+  document.getElementById("weeklyTarget").disabled = disabled;
+  document.getElementById("honestyCheck").disabled = disabled;
+}
+
+function enableEdit() {
+  editMode = true;
+  setFormDisabled(false);
+  document.getElementById("submitBtn").classList.remove("hidden");
+  document.getElementById("submitBtn").textContent = "> SAVE OVERRIDE";
+  document.getElementById("submitBtn").onclick = updateDailyData;
+  document.getElementById("editBtn").classList.add("hidden");
+  document.getElementById("studentMessage").innerHTML = "";
+}
+
+function gatherFormData() {
+  const habits = [];
+  const habitDetails = {};
+  HABITS.forEach(h => {
+    const el = document.getElementById("habit_" + h.id);
+    if (el && el.checked) {
+      habits.push(h.id);
+      const detailEl = document.getElementById("detail_" + h.id);
+      if (detailEl && detailEl.value.trim()) {
+        habitDetails[h.id] = detailEl.value.trim();
+      }
+    }
+  });
+  const mood = document.getElementById("mood").value;
+  const journal = document.getElementById("journal").value.trim();
+  const honesty = document.getElementById("honestyCheck").checked;
+  const target = document.getElementById("weeklyTarget").value;
+  return { habits, habitDetails, mood, journal, honesty, target };
+}
+
+function submitDailyData() {
+  const { habits, mood, journal, honesty, target } = gatherFormData();
+  if (!honesty) return showMsg("studentMessage", "ERROR: Konfirmasi kejujuran diperlukan.", "error");
+  if (!mood) return showMsg("studentMessage", "ERROR: Mood belum diset.", "error");
+
+  const score = calcScore(habits);
+  const today = todayStr();
+  const data = getData();
+  data[currentUser].submissions[today] = { habits, mood, journal, score, target, ts: Date.now() };
+  saveData(data);
+
+  document.getElementById("submitBtn").classList.add("hidden");
+  document.getElementById("editBtn").classList.add("hidden");
+  setFormDisabled(true);
+
+  const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  document.getElementById("celebMsg").innerHTML = `Skor tercatat: <strong>${score}/100</strong> — ${scoreCategory(score).label}`;
+  document.getElementById("dailyQuote").textContent = quote;
+  openModal("celebModal");
+
+  renderStudentChart();
+  renderStreak();
+  showMsg("studentMessage", `SUCCESS: Transmisi OK! Skor: ${score}/100 — ${scoreCategory(score).label}`, "success");
+}
+
+function updateDailyData() {
+  const { habits, habitDetails, mood, journal, honesty, target } = gatherFormData();
+  if (!honesty) return showMsg("studentMessage", "ERROR: Konfirmasi kejujuran diperlukan.", "error");
+
+  const score = calcScore(habits);
+  const today = todayStr();
+  const data = getData();
+  data[currentUser].submissions[today] = { habits, habitDetails, mood, journal, score, target, ts: Date.now() };
+  saveData(data);
+
+  document.getElementById("submitBtn").textContent = "> TRANSMIT DATA";
+  document.getElementById("submitBtn").onclick = submitDailyData;
+  document.getElementById("submitBtn").classList.add("hidden");
+  document.getElementById("editBtn").classList.remove("hidden");
+  setFormDisabled(true);
+  editMode = false;
+
+  updateLiveScore();
+  renderStudentChart();
+  renderStreak();
+  showMsg("studentMessage", `SUCCESS: Override selesai. Skor baru: ${score}/100 — ${scoreCategory(score).label}`, "success");
+}
+
+function renderStudentChart() {
+  const data = getData();
+  const subs = (data[currentUser] && data[currentUser].submissions) || {};
+  const days = [];
+  const scores = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const str = d.toISOString().slice(0, 10);
+    days.push(d.toLocaleDateString("id-ID", { weekday: "short", day: "numeric" }));
+    scores.push((subs[str] && subs[str].score !== undefined) ? subs[str].score : null);
+  }
+  
+  Chart.defaults.color = '#00FF41';
+  Chart.defaults.font.family = '"Share Tech Mono", monospace';
+  
+  const ctx = document.getElementById("studentChart");
+  if (!ctx) return;
+  if (studentChartObj) studentChartObj.destroy();
+  studentChartObj = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: days,
+      datasets: [{
+        label: "Skor Harian",
+        data: scores,
+        borderColor: "#00FF41",
+        backgroundColor: "rgba(0,255,65,0.1)",
+        tension: 0.4, fill: true,
+        pointBackgroundColor: "#00FF41",
+        pointBorderColor: "#000",
+        spanGaps: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 100, ticks: { stepSize: 20 }, grid: { color: 'rgba(0,255,65,0.2)' } },
+        x: { grid: { color: 'rgba(0,255,65,0.2)' } }
+      }
+    }
+  });
+}
+
+function renderStreak() {
+  const data = getData();
+  const subs = (data[currentUser] && data[currentUser].submissions) || {};
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const str = d.toISOString().slice(0, 10);
+    if (subs[str]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  const box = document.getElementById("streakBox");
+  if (box) {
+    box.innerHTML = streak > 0
+      ? `<span class="badge">SYS.STREAK: ${streak} HARI!</span>`
+      : `<span class="badge orange">NO ACTIVE STREAK</span>`;
+  }
+}
+
+// ─── TEACHER DASHBOARD ────────────────────────────────────────────────────────
+function showTeacher() {
+  hideAll();
+  document.getElementById("teacherPage").classList.remove("hidden");
+  document.getElementById("dayCounter").classList.add("hidden");
+  document.getElementById("filterDate").value = todayStr();
+  loadTeacherDashboard();
+}
+
+function loadTeacherDashboard() {
+  const filterDate = document.getElementById("filterDate").value || todayStr();
+  const filterClass = document.getElementById("filterClass").value;
+  const data = getData();
+
+  let students = Object.entries(data);
+  if (filterClass) students = students.filter(([, v]) => v.classCode === filterClass);
+
+  const total = students.length;
+  const submitted = students.filter(([, v]) => v.submissions && v.submissions[filterDate]).length;
+  const notSubmitted = total - submitted;
+  const pct = total > 0 ? Math.round((submitted / total) * 100) : 0;
+
+  const scores = students
+    .map(([, v]) => v.submissions && v.submissions[filterDate] ? v.submissions[filterDate].score : undefined)
+    .filter(s => s !== undefined);
+  const avg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+
+  document.getElementById("statTotalStudents").textContent = total;
+  document.getElementById("statSubmitted").textContent = submitted;
+  document.getElementById("statNotSubmitted").textContent = notSubmitted;
+  document.getElementById("statPercentage").textContent = pct + "%";
+  document.getElementById("statAvgScore").textContent = avg;
+
+  const cat = scoreCategory(avg);
+  document.getElementById("statProgramStatus").innerHTML = pct >= 80
+    ? `<span class="badge">✅ OPTIMAL</span>`
+    : pct >= 50
+    ? `<span class="badge orange">⚠️ WARNING</span>`
+    : `<span class="badge red">❗ CRITICAL</span>`;
+
+  renderScoreChart(students);
+  renderSubmitChart(students);
+  renderLeaderboard(students);
+  renderAnalysis(students, filterDate);
+  renderStudentTable(students, filterDate);
+}
+
+function getLast7Days() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+  return days;
+}
+
+function renderScoreChart(students) {
+  const days = getLast7Days();
+  const labels = days.map(d => new Date(d + "T00:00:00").toLocaleDateString("id-ID", { weekday: "short", day: "numeric" }));
+  const avgs = days.map(day => {
+    const scores = students.map(([, v]) => v.submissions && v.submissions[day] ? v.submissions[day].score : undefined).filter(s => s !== undefined);
+    return scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+  });
+
+  Chart.defaults.color = '#00FF41';
+  Chart.defaults.font.family = '"Share Tech Mono", monospace';
+
+  const ctx = document.getElementById("scoreChart");
+  if (!ctx) return;
+  if (scoreChartObj) scoreChartObj.destroy();
+  scoreChartObj = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Rata-rata Skor",
+        data: avgs,
+        borderColor: "#00FF41",
+        backgroundColor: "rgba(0,255,65,0.1)",
+        tension: 0.4, fill: true,
+        pointBackgroundColor: "#00FF41",
+        spanGaps: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 100, ticks: { stepSize: 20 }, grid: { color: 'rgba(0,255,65,0.2)' } },
+        x: { grid: { color: 'rgba(0,255,65,0.2)' } }
+      }
+    }
+  });
+}
+
+function renderSubmitChart(students) {
+  const days = getLast7Days();
+  const labels = days.map(d => new Date(d + "T00:00:00").toLocaleDateString("id-ID", { weekday: "short", day: "numeric" }));
+  const counts = days.map(day => students.filter(([, v]) => v.submissions && v.submissions[day]).length);
+
+  const ctx = document.getElementById("submitChart");
+  if (!ctx) return;
+  if (submitChartObj) submitChartObj.destroy();
+  submitChartObj = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Jumlah Pengisian",
+        data: counts,
+        backgroundColor: "rgba(0,255,65,0.5)",
+        borderColor: "#00FF41",
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,255,65,0.2)' } },
+        x: { grid: { color: 'rgba(0,255,65,0.2)' } }
+      }
+    }
+  });
+}
+
+function renderLeaderboard(students) {
+  const data = getData();
+  const lb = students.map(([id, v]) => {
+    const allScores = Object.values(v.submissions || {}).map(s => s.score);
+    const avg = allScores.length ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
+    return { id, avg, cls: v.classCode };
+  }).sort((a, b) => b.avg - a.avg).slice(0, 5);
+
+  const medals = ["1", "2", "3", "4", "5"];
+  const el = document.getElementById("leaderboard");
+  if (!lb.length) { el.innerHTML = '<p class="small">NULL RECORD.</p>'; return; }
+  el.innerHTML = lb.map((s, i) => `
+    <div class="lb-row">
+      <div class="lb-rank">#${medals[i]}</div>
+      <div class="lb-name">${s.id} <span class="small">[${s.cls}]</span></div>
+      <div class="lb-score">${s.avg} pts</div>
+    </div>
+  `).join("");
+}
+
+function renderAnalysis(students, filterDate) {
+  const el = document.getElementById("analysisContent");
+  if (!students.length) { el.innerHTML = '<p class="small">NO DATA FOUND.</p>'; return; }
+
+  const habitCounts = {};
+  HABITS.forEach(h => habitCounts[h.id] = 0);
+  let submitters = 0;
+  students.forEach(([, v]) => {
+    const sub = v.submissions && v.submissions[filterDate];
+    if (sub) {
+      submitters++;
+      sub.habits.forEach(hid => { if (habitCounts[hid] !== undefined) habitCounts[hid]++; });
+    }
+  });
+
+  if (!submitters) { el.innerHTML = '<p class="small">ZERO TRANSMISSIONS TODAY.</p>'; return; }
+
+  const sorted = HABITS.map(h => ({ ...h, count: habitCounts[h.id], pct: Math.round((habitCounts[h.id] / submitters) * 100) }))
+    .sort((a, b) => b.pct - a.pct);
+
+  const best = sorted[0];
+  const worst = sorted[sorted.length - 1];
+
+  const moods = {};
+  students.forEach(([, v]) => {
+    const m = v.submissions && v.submissions[filterDate] ? v.submissions[filterDate].mood : undefined;
+    if (m) moods[m] = (moods[m] || 0) + 1;
+  });
+  const topMood = Object.entries(moods).sort((a, b) => b[1] - a[1])[0];
+
+  el.innerHTML = `
+    <div class="insight-item">
+      <div class="insight-icon">[+]</div>
+      <div><strong>TOP STAT:</strong> ${best.label} — ${best.pct}% partisipasi</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-icon">[-]</div>
+      <div><strong>LOW STAT:</strong> ${worst.label} — hanya ${worst.pct}% partisipasi</div>
+    </div>
+    ${topMood ? `<div class="insight-item"><div class="insight-icon">[M]</div><div><strong>MAJORITY MOOD:</strong> ${topMood[0]} (${topMood[1]} subject)</div></div>` : ""}
+    <div class="insight-item">
+      <div class="insight-icon">[!]</div>
+      <div><strong>SYS.REC:</strong> ${worst.pct < 50 ? `Fokus perbaikan pada "${worst.label}".` : "Sistem stabil. Semua di atas 50%."}</div>
+    </div>
+  `;
+}
+
+function renderStudentTable(students, filterDate) {
+  const tbody = document.getElementById("studentTable");
+  const rows = [];
+  students.forEach(([id, v]) => {
+    const sub = v.submissions && v.submissions[filterDate];
+    if (sub) {
+      const cat = scoreCategory(sub.score);
+      const habitsList = HABITS.filter(h => sub.habits.includes(h.id)).map(h => {
+        let text = h.icon;
+        if (sub.habitDetails && sub.habitDetails[h.id]) {
+          text += ` <span style="font-size:12px;color:var(--text-muted);">(${sub.habitDetails[h.id]})</span>`;
+        }
+        return text;
+      }).join("<br>");
+      rows.push(`
+        <tr>
+          <td><strong>${id}</strong></td>
+          <td><span class="badge blue">${v.classCode}</span></td>
+          <td>${formatDate(filterDate)}</td>
+          <td>${new Date(sub.ts).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})} WIB</td>
+          <td><strong>${sub.score}</strong>/100</td>
+          <td><span class="badge ${cat.color === 'orange' ? 'orange' : cat.color === 'red' ? 'red' : ''}">${cat.label}</span></td>
+          <td>${sub.mood || "-"}</td>
+          <td style="white-space:nowrap; text-align:left;">${habitsList || "—"}</td>
+          <td style="max-width:200px;font-size:12px;color:var(--text-muted);">${sub.journal || "—"}</td>
+        </tr>
+      `);
+    }
+  });
+  tbody.innerHTML = rows.length ? rows.join("") : `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);">NULL RECORD</td></tr>`;
+}
+
+// ─── LAPORAN NPET & EXPORTS ───────────────────────────────────────────────────
+function showReportPage() {
+  hideAll();
+  document.getElementById("reportPage").classList.remove("hidden");
+  generateReport();
+}
+
+function generateReport() {
+  const data = getData();
+  const students = Object.entries(data);
+  document.getElementById("reportDate").textContent = formatDate(todayStr());
+  document.getElementById("sigDate").textContent = formatDate(todayStr());
+
+  let totalEntries = 0;
+  let allScores = [];
+  const habitCounts = {};
+  HABITS.forEach(h => habitCounts[h.id] = 0);
+  const categories = { "EXCELLENT": 0, "GOOD": 0, "FAIR": 0, "WARNING": 0, "CRITICAL": 0 };
+
+  students.forEach(([, v]) => {
+    Object.values(v.submissions || {}).forEach(sub => {
+      totalEntries++;
+      allScores.push(sub.score);
+      sub.habits.forEach(hid => { if (habitCounts[hid] !== undefined) habitCounts[hid]++; });
+      if (sub.score >= 85) categories["EXCELLENT"]++;
+      else if (sub.score >= 70) categories["GOOD"]++;
+      else if (sub.score >= 50) categories["FAIR"]++;
+      else if (sub.score >= 30) categories["WARNING"]++;
+      else categories["CRITICAL"]++;
+    });
+  });
+
+  const avgScore = allScores.length ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
+  const healthyCount = students.filter(([, v]) => {
+    const scores = Object.values(v.submissions || {}).map(s => s.score);
+    return scores.length && (scores.reduce((a, b) => a + b, 0) / scores.length) >= 70;
+  }).length;
+
+  const sortedHabits = HABITS.map(h => ({ ...h, count: habitCounts[h.id] })).sort((a, b) => b.count - a.count);
+  const topHabit = sortedHabits[0];
+  const hardHabit = sortedHabits[sortedHabits.length - 1];
+
+  document.getElementById("rTotalStudents").textContent = students.length;
+  document.getElementById("rTotalEntries").textContent = totalEntries;
+  document.getElementById("rAvgScore").textContent = avgScore + "/100";
+  document.getElementById("rHealthy").textContent = healthyCount + " siswa";
+  document.getElementById("rTopHabit").textContent = topHabit && topHabit.count > 0 ? `${topHabit.label}` : "N/A";
+  document.getElementById("rHardHabit").textContent = hardHabit && totalEntries > 0 ? `${hardHabit.label}` : "N/A";
+
+  const catObj = scoreCategory(avgScore);
+  document.getElementById("reportSummary").innerHTML = `
+    <p>Sistem mencatat Program 30 Hari Hidup Sehat SMP Esnesaba sedang berjalan.
+    Tercatat <strong>${students.length} siswa</strong> terdaftar dengan <strong>${totalEntries} transmisi</strong> log kesehatan.
+    Rata-rata skor kelas adalah <strong>${avgScore}/100</strong> (${catObj.label}).
+    Sebanyak <strong>${healthyCount} subjek (${students.length ? Math.round((healthyCount/students.length)*100) : 0}%)</strong> berada di kategori GOOD/EXCELLENT.</p>
+  `;
+
+  const habitRows = sortedHabits.map(h => {
+    const pct = totalEntries > 0 ? Math.round((h.count / totalEntries) * 100) : 0;
+    const bar = `<div class="progress-wrap" style="height:10px;margin-top:4px;"><div class="progress-bar" style="width:${pct}%;"></div></div>`;
+    return `<div style="margin-bottom:10px;font-size:13px;"><div><strong>${h.label}</strong> — ${pct}% keterlaksanaan (${h.count}/${totalEntries} log)</div>${bar}</div>`;
+  }).join("");
+  document.getElementById("reportHabitAnalysis").innerHTML = habitRows || "<p>Tidak ada data kebiasaan.</p>";
+
+  const catDist = Object.entries(categories).map(([k, v]) => {
+    const pct = totalEntries > 0 ? Math.round((v / totalEntries) * 100) : 0;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(0,255,65,0.2);font-size:13px;">
+      <span>${k}</span><span><strong>${v} log</strong> (${pct}%)</span></div>`;
+  }).join("");
+  document.getElementById("reportCategoryDist").innerHTML = catDist;
+
+  const recs = [];
+  if (hardHabit && hardHabit.count / Math.max(totalEntries, 1) < 0.5) {
+    recs.push(`<li>Prioritaskan peningkatan kebiasaan <strong>${hardHabit.label}</strong> yang terdeteksi rendah.</li>`);
+  }
+  if (avgScore < 70) {
+    recs.push(`<li>Lakukan inisiasi motivasi untuk meningkatkan average system score melampaui batas aman (70).</li>`);
+  }
+  if (categories["CRITICAL"] > 0 || categories["WARNING"] > 0) {
+    recs.push(`<li>Peringatan: Terdapat subjek di zona CRITICAL/WARNING yang membutuhkan pendampingan segera.</li>`);
+  }
+  recs.push(`<li>Lanjutkan pengawasan log harian secara konsisten.</li>`);
+  document.getElementById("reportRecommendations").innerHTML = recs.length ? `<ul>${recs.join("")}</ul>` : "<p>Sistem dalam kondisi optimal.</p>";
+
+  document.getElementById("reportConclusion").innerHTML = `
+    <p>Berdasarkan log data terkumpul, status Program 30 Hari Hidup Sehat terpantau
+    ${avgScore >= 70 ? "<strong>STABIL DAN POSITIF</strong>" : "<strong>MEMBUTUHKAN PENYESUAIAN PROTOKOL</strong>"}.
+    Indikator terbaik ada pada kebiasaan <strong>${topHabit && topHabit.count > 0 ? topHabit.label : '-'}</strong>,
+    sedangkan anomali terendah terdeteksi pada <strong>${hardHabit && totalEntries > 0 ? hardHabit.label : '-'}</strong>.
+    Operasi program dilanjutkan sesuai parameter.</p>
+  `;
+}
+
+// ─── PANDUAN MODAL ────────────────────────────────────────────────────────────
+function showGuide(role) {
+  if (role === "student") {
+    document.getElementById("guideIcon").textContent = "SYS.HELP";
+    document.getElementById("guideTitle").textContent = "PANDUAN SISWA";
+    document.getElementById("guideBody").innerHTML = `
+      <p>Selamat datang di sistem <strong>HEALTH TRACK</strong>! Berikut panduannya:</p>
+      <ul>
+        <li><strong>Setiap hari</strong>, transmit data checklist kebiasaan sehat.</li>
+        <li>Isi form secara faktual. Kejujuran adalah dasar analisis sistem ini.</li>
+        <li>Tentukan <strong>Mood</strong> dan isi <strong>Jurnal Refleksi</strong>.</li>
+        <li>Skor dihitung otomatis berdasarkan jumlah parameter yang terpenuhi.</li>
+        <li><strong>SISWA HANYA BISA MENGISI CEKLIST INI SEHARI SEKALI. DATA YANG SUDAH TERKIRIM TIDAK BISA DI EDIT.</strong></li>
+        <li>Pantau <strong>HISTORI 7 HARI</strong> untuk evaluasi kemajuan.</li>
+      </ul>
+      <div class="notice">Data ini bersifat konfidensial untuk monitoring kesehatan internal.</div>
+    `;
+  } else {
+    document.getElementById("guideIcon").textContent = "SYS.ADMIN";
+    document.getElementById("guideTitle").textContent = "PANDUAN TEACHER DASHBOARD";
+    document.getElementById("guideBody").innerHTML = `
+      <p>Dashboard untuk administrasi data program 30 Hari Hidup Sehat.</p>
+      <ul>
+        <li>Kode akses: <strong>GURU2024</strong>.</li>
+        <li>Gunakan <strong>DATA FILTER</strong> (Tanggal & Kelas) untuk melihat statistik parsial.</li>
+        <li>Grafik menampilkan tren log 7 hari ke belakang.</li>
+        <li>Sistem akan menyusun rekomendasi otomatis pada kolom <strong>ANALISIS KEBIASAAN</strong>.</li>
+        <li>Gunakan <strong>[ SIMPAN PDF ]</strong> / <strong>[ SIMPAN WORD ]</strong> untuk mencetak dokumen format formal.</li>
+      </ul>
+      <div class="notice">STATUS PROGRAM: Optimal jika partisipasi ≥80%.</div>
+    `;
+  }
+  openModal("guideModal");
+}
+
+// ─── EKSPOR PDF ───────────────────────────────────────────────────────────────
+function exportPDF() {
+  const element = document.getElementById('reportContent').cloneNode(true);
+  
+  // Buat HTML bersih tanpa style gelap untuk diekspor
+  const htmlStr = `
+    <html lang="id">
+      <head>
+        <meta charset="UTF-8" />
+        <style>
+          body { font-family: 'Times New Roman', Times, serif; color: black; background: white; line-height: 1.5; padding: 10px; }
+          .report-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid black; padding-bottom: 10px; }
+          .report-header h2 { margin: 0; font-size: 20px; text-transform: uppercase; border: none; padding: 0; }
+          .report-header p { margin: 5px 0; font-size: 14px; }
+          .section-title { font-size: 16px; margin: 15px 0 8px; border-bottom: 1px solid #ccc; font-weight: bold; }
+          .card { margin-bottom: 15px; }
+          .grid.three { display: flex; flex-wrap: wrap; gap: 10px; }
+          .stat { width: 30%; font-size: 14px; }
+          .label { font-weight: bold; display: block; margin-bottom: 2px; }
+          .progress-wrap { background: #eee; border: 1px solid #ccc; height: 10px; margin-top: 3px; width: 100%; border-radius: 2px; }
+          .progress-bar { background: #555; height: 100%; }
+          ul { margin: 0; padding-left: 20px; font-size: 14px; }
+          li { margin-bottom: 4px; }
+          .signature-table { width: 100%; margin-top: 40px; text-align: center; }
+        </style>
+      </head>
+      <body>
+        ${element.innerHTML}
+      </body>
+    </html>
+  `;
+
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = htmlStr;
+  
+  // Ganti flexbox tanda tangan dengan tabel agar rapi
+  const flexboxSig = tempDiv.querySelector('div[style*="display:grid"]');
+  if (flexboxSig) {
+    flexboxSig.outerHTML = `
+      <table class="signature-table">
+        <tr>
+          <td style="width: 50%;"><br>Mengetahui,<br>Kepala Sekolah<br><br><br><br><br><b><u>Dra.Sriyatun,M.Si</u></b></td>
+          <td style="width: 50%;">Banyubiru, ${formatDate(todayStr())}<br>Mengetahui,<br>Guru PJOK<br><br><br><br><br><b><u>Fendi Akhmad,S.Pd</u></b></td>
+        </tr>
+      </table>
+    `;
+  }
+  
+  const opt = {
+    margin:       0.5,
+    filename:     `Laporan_NPET_HEALTH_TRACK_${todayStr()}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(tempDiv).save();
+}
+
+// ─── EKSPOR WORD ──────────────────────────────────────────────────────────────
+function exportWord() {
+  const element = document.getElementById('reportContent').cloneNode(true);
+  
+  const preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Laporan NPET</title><style>body { font-family: 'Times New Roman', Times, serif; color: black; background: white; line-height: 1.5; font-size: 12pt;} .report-header { text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; } .report-header h2 { font-size: 16pt; margin: 0; font-weight: bold; border: none; } .report-header p { font-size: 12pt; margin: 5px 0; } h3.section-title { font-size: 14pt; font-weight: bold; border-bottom: 1px solid black; margin-top: 15px; margin-bottom: 8px; } .stat { margin-bottom: 5px; } .label { font-weight: bold; } .progress-wrap { background: #eee; border: 1px solid #ccc; height: 10px; margin-top: 3px; } .progress-bar { background: #555; height: 10px; } .signature-table { width: 100%; margin-top: 40px; text-align: center; }</style></head><body>";
+  
+  const sigHtml = `
+    <table class="signature-table">
+      <tr>
+        <td style="width: 50%;"><br>Mengetahui,<br>Kepala Sekolah<br><br><br><br><br><b><u>Dra.Sriyatun,M.Si</u></b></td>
+        <td style="width: 50%;">Banyubiru, ${formatDate(todayStr())}<br>Mengetahui,<br>Guru PJOK<br><br><br><br><br><b><u>Fendi Akhmad,S.Pd</u></b></td>
+      </tr>
+    </table>
+  `;
+  
+  const flexboxSig = element.querySelector('div[style*="display:grid"]');
+  if (flexboxSig) {
+    flexboxSig.outerHTML = sigHtml;
+  }
+
+  const postHtml = "</body></html>";
+  const html = preHtml + element.innerHTML + postHtml;
+  
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+  const filename = `Laporan_NPET_HEALTH_TRACK_${todayStr()}.doc`;
+  
+  const downloadLink = document.createElement("a");
+  document.body.appendChild(downloadLink);
+  if(navigator.msSaveOrOpenBlob){
+      navigator.msSaveOrOpenBlob(blob, filename);
+  } else {
+      downloadLink.href = url;
+      downloadLink.download = filename;
+      downloadLink.click();
+  }
+  document.body.removeChild(downloadLink);
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  const data = getData();
+  const rows = [["Nama Siswa", "Kelas", "Tanggal", "Waktu", "Skor", "Kategori", "Mood", "Kebiasaan", "Jurnal"]];
+  Object.entries(data).forEach(([id, v]) => {
+    Object.entries(v.submissions || {}).forEach(([date, sub]) => {
+      const habitsStr = HABITS.filter(h => sub.habits.includes(h.id)).map(h => {
+        let str = h.label;
+        if (sub.habitDetails && sub.habitDetails[h.id]) {
+          str += ` (${sub.habitDetails[h.id]})`;
+        }
+        return str;
+      }).join(", ");
+      const time = sub.ts ? new Date(sub.ts).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : "-";
+      rows.push([id, v.classCode, date, time, sub.score, scoreCategory(sub.score).label.replace(/[\[\]]/g, "").trim(), sub.mood, habitsStr, sub.journal]);
+    });
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `HEALTH_TRACK_DATA_${todayStr()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetAllData() { openModal("resetModal"); }
+function confirmReset() {
+  localStorage.removeItem("healthtrack_data");
+  closeModal("resetModal");
+  loadTeacherDashboard();
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function hideAll() {
+  ["loginPage", "studentPage", "teacherPage", "reportPage"].forEach(id => {
+    document.getElementById(id).classList.add("hidden");
+  });
+}
+
+function openModal(id) { document.getElementById(id).classList.add("show"); }
+function closeModal(id) { document.getElementById(id).classList.remove("show"); }
+
+document.querySelectorAll(".modal").forEach(m => {
+  m.addEventListener("click", e => { if (e.target === m) m.classList.remove("show"); });
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.getElementById("filterDate").value = todayStr();
+
+// ─── NUTRIFOOD RAIN ANIMATION ──────────────────────────────────────────────────
+function initNutrifoodRain() {
+  const rainContainer = document.createElement("div");
+  rainContainer.id = "nutriRainContainer";
+  rainContainer.style.position = "fixed";
+  rainContainer.style.top = "0";
+  rainContainer.style.left = "0";
+  rainContainer.style.width = "100%";
+  rainContainer.style.height = "100%";
+  rainContainer.style.overflow = "hidden";
+  rainContainer.style.pointerEvents = "none";
+  rainContainer.style.zIndex = "-1";
+  document.body.appendChild(rainContainer);
+
+  const logoUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADDCAYAAADHn15dAAAQAElEQVR4Aex9B5wcxZX+V90TNmuVJSQRbGNABBsD9t8IDhkUwCAOASLLB2dj2SZYCK0EHIbFREUw3GFjk7FAICNkMEnJgjPJHJgkE2SCJFDWatPszs5Md/2/1z2z2jAbtWl2q39V3VWvql69fvW+ij27FsxlNGA00KQGDECaVI1JMBoADECMFRgNNKMBA5BmlGOSjAYMQIwNGA00o4FOBEgztZoko4EM0YABSIY0lBGzezRgANI9eje1ZogGDEAypKGMmN2jAQOQ7tG7qTVDNJCZAMkQ5RoxM18DBiCZ34bmDTpRAwYgnahcwzrzNWAAkvltaN6gEzVgANKJyjWsM18DBiAN2tBEjQbqasAApK42TNhooIEGDEAaKMREjQbqasAApK42TNhooIEGDEAaKMREjQbqasAApK42OjdsuGegBgxAMrDRjMhdpwEDkK7TtakpAzVgAJKBjWZE7joNGIB0na5NTRmoAQOQDGy0xiIbSmdpwACkszRr+PYKDRiA9IpmNC/RWRowAOkszRq+vUIDBiC9ohnNS3SWBgxAOkuzvYVvH38PA5A+bgDm9ZvXgAFI8/oxqX1cAwYgfdwAzOs3rwEDkOb1Y1L7uAYMQPq4AXTn62dC3QYgmdBKRsZu04ABSLep3lScCRowAMmEVjIydpsGDEC6TfWm4kzQgAFIJrSSkbGtGuiw/AYgHaZKw6g3asAApDe2qnmnDtOAAUiHqdIw6o0aMADpja1q3qnDNGAA0mGqNIx6owYaA6Q3vqV5J6OBdmrAAKSdiuuUYvccEcSdJxVg3oQhWDBhFG49cV/MP34f3D5xOBZOHICF38+GhuqUug3TtBowAEmrli4mLphwNOZPuBPlA55ENPEioNfA1S8h4KyBtl9Cwn0JjrsKibxnsGD8/QTQ1Zg74RQ+90PxlFAXS9unqjMA6QnN7eoToPVlFGUSx4f/x+dB9PvR75P0+/P5baYxHy4kgG6B0k/y+Vfkli4muH6K28d9DcXFpj3RsZdRaMfqs33ctN7RjoIycgiAJhNcv0VcrUDuK/Mwd/y3DVDaoc0minQpQJqQofeTU+uHpt7UVp8wqYq+vc7i6PI1Fp7B57MEyk3eGoYE4/ZMA9aeFTelm9WArA/mTziT64dnuH64DE9MsdPmV85HpK+n7wi3F5lcxTXMU1yjTELx2ADjxrVTAwYg7VRci8VkJyq3bA6nPw8w79Hs2a/GhrIL0u5CXbF6E+kvMV9HOdnpOoJrlIeQF5xFoOR2FOO+xscApDNafO74/aHc+2igl4eUzgtbrtRSSLDM59TnYsjIIpSUV4SHv+iuSJE66NmfnK8H3Lm4fWxhB/HsU2wMQDq6uedNOISjxQPQ6pQsy7WOH7ADI8NR1iKdOgYRJAu483QrFh4/gsQ6znoNUGvQ8RcX82oaEsHbDEjartzeApC2v3lnlJCRA/q3ZD0mm6PGyYO24qiCUlS7omZNsufyeJ8Ox3oac8f93DsMlAPCouURaPduppXRp3EKBF0aeqtIsvb5CeKB67zDxlYVMZlEA9Jy8jR+TzUgaw5LLySbY0IEx/iB23FkfhniBEeNK/bJlN2OelffgVJ3wXZW8YDwccwfPwewjmWWcvqkUwgojQHBOPbJqsK+OVUYGqpBru2ADNoKGJv1/RxO7jRoqGQF5tGCBjw9t5DHJLekAVlTaH0NtDpZFHpsYQm+V1BKK9So0crzTbCg0UK2Z3mWgVkscA3zjaJHQSCB7xbswnnDvsJP9tqAi4ZvxIX0Ev4x42cO3Yyj+pViUDAGqRMsjJavLEBdjQXjJsBcrdKAr9tWZTWZmtRAbulZtM+fMF0dmleOY/uV0Gg1pKN2CRDxTGuV46IeRxWUEQxf4t8Hb8Ho3Ar0D8Qho1JIucjj6DGco8h38ksxefBm/HivjTiN+fbLjnijTSsqGQKtbvS+8WpF5r6exQBkTy3AW3fgarLJHUbDHcdFuexaaRLa6vJp/JMGb8Wpg7Zgr1CUmAOPMxS8PbAkM+Er3iHwhFRI8Hy33y5M5UhzOoEyghsCrZg/HQVtz4A5IxEVNusNQJpVjyQ24+Xgz1LyDdXokNL4Qf+dGBysgVIK4UAArTDUWuapRf2RHBls8kqBIhwMYEBuNoYV5mHEgAKM6J+Pof1yUZgdRtC2IGCRESrbciCjytThX+JYTvGyrBSH2ioaBqYiJ3h8Q6KJ19eAVT9qYm3SwMay70Hrc6TMIXkV3nTIJSwKc7KQnx2i8WooGrtiSPI057/L9cRhnJ7pZKaAZXlA2GdgPwwnOAYSJAIK4T0oL8cDy95ME/DYlvJGGam7n53AxIHbMHnIFsjiPsku3aM/FH6JOafmp0s0NF8DBiC+Htp+l+mJdn/MgoNlQX001x0BrhGy2OMPys8hGRBjDxMgYUtCHintTaZJR+TLot5PtjgCDRVQEAgB228i4VDXS04ZXWRkGcmRJS8cFJJXp2LosNxynD1kE2S9wmhT7njY0YlNJRo6uJY0WmifBnKCh0BbP5TC32LPvxfn/lAWBhIcwYDFtYOYM7zFdbPTHa4lRmZFMYBrCSkhviA7DPFo5ZUXDkFAIsAUcEkx4SNbw6dzJBkaigkpnc/iCHghiif5iE6Xo4/T/O6pjyuhXa+vMIljxLB8TmkOzy/nbEUjl714flaIZDCuAN5DHFUKmAcEApq4BhIcsu6QZGmQPPKQp8Rb4wUMtmVhcEEuZESxLb+0TLlGhatwCg8sRc4meB2DnOhRTaT1ebKvyT6vhjYqwP+u6UQQAPvz8G4Id6+gFGR9YPMJXhbxIYYbUBqDJJ20Ri5JsJiH2b2YUspbfHuRNt6Eh8ggaxbb8ptWQPINbgEf178EKRA2YNuPcYKdd+MaacDXYiOyITSrATdwINNHBzg6HMxzigCXyOFAwBtBBBRMg21ZUAzIIn1EWHa2UikkNnAVjnDwiZLLceXux9tzl+mZ7HRZBFuqvKxx9s+uYlSk4qOuU/oHmD92UF2SCfsasPyHubdJAw5kSlIou0Qjs6oJDxAcIQ8UKT6yuBZT1FphRLgaspBPpdV7MtOOeAgx128KrTUqa2LYM4gAMpIMyMv2qhJe2dwGHlNYgiw+PWL92/6AB/r6VBMzi/Q224DmwGDh26Dhj+TCPI/rC6UUcsJBJsC7NO+hgA2Lo4iE5SR8n6xqrk2IBqbVdxrbYiFsjYfZGJIbKKuqQWU0Vsuvfv7WxwQgOaEghKtMtfbJqsLXZRSh7PW5qHyi/PD6NBMTDVhyM74NGpg/IQdafQNcN4zgyGBDeyOHAEIMMcUpaNtI0YKciskZR9Byke6qcmz8X3khEoSIpDuuiy1llSivrpFou32QABWQpKZa8rnKIdxxs9LJoaxD211RLy5oANLWxnW1LGqHBQiQwcntUznUC1j1RwebcdnREqrLseAbORHsT49GvbcvwLuV+Xi7vB9zwvOxhINNpRUeUGoYBi/hxUernGQSwMqOWE5yFNGsex+OZP0DCUmu77XeF8Vjs+oTTcwApK02EHDzWCRfemOZXmlGLIJBqcbmK4tlGUmYBVkcRY7rvxOFwbhEG3lZg7ywczBeLRuAmLYgO1sOF+slldXYsKPMA0qkJu6drzSuqRG7WoLsqokcUkZklS3nvTg1bARUhSEoCOfUFjQBTwOWdze31mvAscSIwiGOIHJKLkZnERxigA2ZyBRLFstCd3nbm1OyEwdu837PwWgjV+XaeJ4geWLbcPyrKhcJ9vgClITjwAPKzjJspC+JVCPuCMdGLBoRRD45nwnaflMHCNQRAhDK3yAz3yvur+obJPTlqK+1vqyBtr67pWwWseRMQTzD3pQIBImEG/r+uVmoneIwUdYi8nn6wGCMscawElCsrSzAH7eMxGNbR+Atrk12JYLMS6ddyCiyubQSG5JAkVGmMRfmreMEHOFgAAIWMPMQTg1TstfJFoYTCNWJmyA1YABCJbTJudphfk5+uCnFgDjP8LybxOp72e4d0i8XIS7aU1kO4dnJ+cM24UA+0zeARpTbvh9yXfIkR5P7No3Csu3D8M+qfFRzlJEyNfE4thAoX5aUIxJLP21LSaKUQhYB4sU5KhXYcYQ4knjx1E2+d1SJ1g1LqTJ94Cm67gOv2YGvqG3u16pYnIYmnh0ytNbsnVPm37guGUHkdDsckD0vH1jye4+zhmyG/DQ33xbMCacGZTkNEovdyXOSv5f1x6NbRuDBzaPwv1ynlDtBGQw4osQgINnFaRfFaMDAjwpnme7JU6TMtlw0+oCSmITrtmbbzGfaR+4GIG1t6GCskiZe4f/W3Fefw/GkKeNMsZfdJPkth6wHhCaGL4d3xxXuxHnDvsIBOZWQuZukpfUEi0y/Nkaz8NyOIXiYQHmPUzGXQE1wPbKlLIIdFREPrOnKy06bUgIRQLabZeu5Xj6FcmTJIUk9ap+PWH1eA21VQJwHCcB2GT3kExExOYfnFuJbYpXN7Vb56nZwfg5k6iUgkTL7ZUVw9tCvcNKgbShMtwUrmep4GQU21YTxJKddK3YNRg2nY0QGAVJFX83RrE7mZNC2LG/EkahijiRWJOp7V29CeBtHRz9q7r4GLP9h7q3WQPV3pJv+XH7yWsKpj5RzXI0EQSJgkXhzXnrywQW58H/slAXbUjzEVpBpz5h+JTh/2JfwTrvrMxHDbXR4IVvD/7trAF7YOcRbs0iRnZVVKKuKSrDWC6BYDZTyJXS4jSzy12aQgMI6THur+cWM5Otj3gCkrQ1eXMyOX70HTm22xMKecbucX9XEG9lvs5xl0Ty8MB8j+hcgO+TvMGkAo7gVfAbXJvtlCyZIEKexjNb9E57ePw6oLeAcj95zFAZvlhfWgkRk2V5ehWiT8mgPTN6o43Hwbi6U9a4XMrd6GjAAqaeOVkZsvEVjrdrMaY7sKom9VsUSEANvJYfabHLaLiDJDfs7rLRUDOAW8PgB23eflyjszW2wp1CZuABwJrLwXPqN9J5zeReQrN41CDIyxJPnJil5ZNyQsKaEEo44tj8tYznPaWxnUg8AiCdNj7oZgLSnOZz4WhrUp7K7tD0WghhdNbdaxTDbyk4MNxywvd+dy6gi5V2OTvtkVUE+pYfHHQcgHv86itckULTqPUTGXAPLmkQZHgMgBypwGXidO13vVPbzSlREY4hSJpGNSZBpIAc6SOL2eBiyhkLqUngHkfBnMFcjDRiANFJJKwhFa7bCwstyVvFpdS4LKMi3U3KIpxhrq0uBZGBeNlSSgU3rl0PFsOUIuwHQ1mgJeL6Y07wrX3yXmS/m4vx60srpPaN/pbQ/Snmw6LqO90WwlgR6OY2X7WgB35c1WQBBSHLS6RdQ/ExVMmIedTRgAFJHGa0OKmieGfwFUJGPq3K9wzvwKquqgeN104y00Ykhy1ZwOBDwSmoo7BWugfdrRRCOrv6ml1D3Jn/PtyoxnyC5luQIPWRd9EEkX4Ko4ggiaxKJUZ7qiAAAEABJREFU+B88alQ6AXzJrWJOEYUsfgOHnxclYHxjDRiANNZJ6yiueo3d8Jub2Rt/Ec2mBWvPIPfkdxy2ZdVbsGdx9Bga4gxKenuFBn8NPilmMaddVf3voSzyh681CKwPI3lciNveqCZnJAKSKNdICsAGyio/0GIw6fRfUH3Mx8mIeTTQgAFIA4W0OnrVyjLa4qK4thJvV/RDjFunMoWRjwrj3PJtNZ86GcWAZRs4RZLGySVIvLhCAYqb+CedxUticNUdlOdNAsUbRWQL2tWut/0c40FiNJFAgjK+X5nvPT2eGlvh2g+Rr+vFe/Otne8mbdDOoqYYYoE/0yD/vo7TrM+4FrE485Jpza5ItF3KYfdfb4om8YSMHq3hNnvFJoLkHmZNVHOXaisX4hQHMoJEuGB3ubO1sSYb6ygnZWY2Oks9gf0K3mLIuCY0YADShGJaRb7m+e2AuqvGtatf4Q5SleuvH2QUidTE2KGjTZfL9Uvd8wuH4Nj9JS+iuL5YMIMmr0BC1hLrNGvewd01soPwK6uOeiOc7HJVcQ2SLC//OPRunLXE2wVI0syjgQYMQBoopM3RSPhpaHfppxxF5CxCyjucYm0ti9A4HZqqUFr2ilmqauJIrRUkLp+ybOVhZHJB/SWZaWZr2l2xehPzviYjRxmBIPOmMp6qx3houJYLd1mbJEePGj7nY+byj5pmZlJEAwYgooU98bI96tq30hg/erl0AD6uyuOCHZCee1NpeYufokvVAgZZJ+yoqIKMIh5NaXxanYPkCCJIe1/ozXpFaGj8Q/LIZyiCJtne3cLRZA0PEeMckSSN/lFEshfxaVwLGjAAaUFBrUq+6sW10Lgu4tilz+4YitSuVjV3jr4qKYcYvqwFhJeAQZ7iU+Fo3MHm0gpvFyxFr0wEIH/IwRUrB76Ei/+TtJa9tZ554gkuyMEhR6Z9y3cOwVaCBP71CpRzAwTYftzcm9FAawDSTHGTVKuBfQuXAuqWHfFgdNmOYdhQk+ONJPLT2G3lEazfWQZ5lnPBHI0nIN9uyd+/EtrGkjLI9jCSF0cjvF7eH+u5JeuT9LOoGvOpH27hrlUpc8QCykXMVVheMhj/5LYvaeI+gmvNwMzVAiKJG9+CBgxAWlBQq5NlsRuJ3cWRZOGWmnDsT9uG48OqPK+44l0AISOJ/Lhp/Y5SfLGjDBt2lkNosQZ/teTtikL8rZSH5yxHfp9xvXBP67diuQBS0DKdWr5rMGQU8gchfE4+l2H2i38Xtsa3TgMGIK3TU+tyFa+JoirrZs5sbt4WC1UKSFayB5dPPwQkFmiq3FpyOG9yaMeaYWHspXHNIZ+uvFw60PtBlISZVkajvsH7/oqRVrpclgl8xvXLG9xZc1gly30CpaahaOVKho1rgwYMQNqgrFZllbl9ZeFt0OqXXJNs/OuugXhg8yhvqvNpNBeyM+XsXizDZbicO07vVxZ4f6RhRckgVHs/gOIhHnQR9u3ftsW0whDKGZZFuivg0HgdUD/ijtUKmKvNGjAAabPKWlFATraLlj8A1zqTo8QyjiZRAcrDm0fi3k17e3+xREaXp7YPx6NbR+A+0h7fuhc+4VYxwSM/WlrNHv88RI65r83nFBr7U0IZlLiVi4eg1HkoWv4Gaca1QwPdDJB2SJwpRbgO8Ob7uYmp0PgRxX6uxrV2bYuF9MdcNL9dXog3ywrxz8p8+du8bsJVW5nnGfr/RCJ0Jo16NYqLXcZb7+48KQwF+Ru76wB1CSJZvyAfrj1grnZqwACknYprdbFL1lRi1oolNNYpUO5Erg8u5/NuWHoJlF7M+AJofRGUGodI/CwUrfgjrn52V6v5181YGZNdgWdhWz9E0fL7zFZuXeW0L2wA0j69tb2UrE1mrnqTC+X/pr8ElWPOQWTM+QTPTMxa+TAN+gPIIr/tnHeXuHpVCWau+D1mvPiv3UQT2hMNGIDsifb2pKxMn8TvCY+GZWVaJ74h3cTbrQEDkHarzhTsCxrovQDpC61n3rHTNWAA0ukqNhVksgYMQDK59Yzsna4BA5BOV3EnV6ChMOekkZg7fgz9/jxzkUPCTq60A9nPOTUf8ybsh+Kx/q/NOpB1R7AyAOkILXYkj3uOCGLBhFG486SCFtnKb9QXjD8HVnwlYbIKSt0J+R+KLRbsxgwLv5+NuROPpZz/gXnjb4NV9SzPgn6HrEBuN0rVZNUGIE2qpumETkt5YoqN8v6zeHD4Mmqc+zF37LAm6xJw5Lx6IUeM6wBVDmALDS0fblbPblOdPwjK/THf8eeUeTqgjgWQx8PNBJ89zvVsZfY4daURSKY48yYMgfSMaZLbRPpX5QBAnUOj35fGfgqskHw2grRXzqs8mdf/CaUvRk78eGjnBEDNQXY8hp58zVj+JcKBaXBxOsVM/UoyCruibZ/VsHBXOAOQPdHyrSfui3njZtOYn0Q87+A9YeWVzYOMBK8wXE3/Piy1js/GbsG4wwmMuVB4BzNX/g2XyOcsqz/lafwzuPz5GvTkSxH+ImN14Q6KWULfo50ByJ40j+1cBKVuJYuDYLl73nOL4QTiV9GExiNhT0n7yYiMWK51MevcG1p9xWdmuuGf8U10SmcJlId1T3wRA5A9aRWlU9OCatiBqj1hVVv2ijWlmLXiFVz9whe1tLqBOeMKOHoc4ZN0jf/MwPvmfE2A+wBRApTBKV32qJfpXQDRkAG8K7c5kwtLVYO41fa/FtdY3paNw0pkc4Hbr+WMDXIUF1sonhKC7JJJvQ2SW4ymyu/JdqzUK762MqVrgz00kFkAkd87yM7O/HHHcO/8aiwY9/88vc6fcCDmj7+G64FHuH34R8wb/ytuJX4HsivkZUjeNAEkPG6fOJzp3GpkmfkTkr1xMo88xAhuPbk/5p1wGHlNI++pkLKSls4rHYUDvzeXfMU0Rskn9ct27ZwTDyCfCyjz5dy+DeOOE4YyPoN+EeW9EbeN8w1eFvqyxTv3hBMxb9x/QdY4wqeu10G2maInUfF9+IDIK8Yv9Uk85UWOOeMOwrzxM5D7yr3ILX0M5QOeZPxuzBt3Fm45YWAqa9qn8J0z/kjKeC3LP8jyi5Eb+hPf43aWPxlyhpG2YB2iyLBg4reow+vYXo95fu74m5ETPJ5rN/896mTvacEeL2CtwuaO+xFqEkuhgqtprM9RuTdyJ2RvHo6NgaufIO06KHUW6eexzK85DXkWX+z6hWc8JHhu3oSLUOMsQ8L5K5T7HMtcT78X6l4CmNzgIwjEVgDWSib9jvUcDcWcjHhu4cQBNJB/Z/rJXlxjOELxu2g4D3kGkPvqryGg+GLX3azvBVisD3iEeSchVjOMo81vGV5AnudS3inc4iS/CVcjkfcMHL0GynoKUFcgEC9A3UvAY+HHLDPMI2v1I8wbvwS5wWU03qVYX3akR5fbvAm5NOrpXOgv5YjzHSi1ChYeYtIrfB4LqEUIqSXsBL6PdNf8sYPI9ybmXUT9jmCdf4FSD0O77zM8GVB/ghV9gOA5EE1dIm/O326A4/6OOjwC2nLgqn2gMJ2e76jHoYdfmQMQ2B9As4GAtwCVD8AB1AQq+ho22KP0J8K15AdJxaRvYXwYlLqOPdX3kLq0fg8aD0LhHcjeu/CwdP21g5XYAiU/ZlLLmCebXpz3rwUkAOkRE8750Ooyxvejp9NBxgezzoF8FpJ/FE58B5T1F8ClbMwiTmsFHZgNqMMAyN+5krrLEXfKWYaGqx7gcyPTsuhjcIP+qMSIt43sulIngamCQgJ0DjT6MyyHbAEolDEMLy9APeBmpj+BrOCPMXP5Ily54mkUrZgD5Z4O4A1o9QOAdc4/4SjUvWRk0cG7SLqEfiH2LbwURSufII9lmLXyV4A6GwDXSPoMaH0vO4akHuBfoqP5404nsJ4m4RDWNw1V8TNY/gLo7AnQmEL6P+C3I1/DGoic7dziRo+7Mgcgs158G7OWPw6ln6IWE/QhQI2msv+LjXYbG3ANZr/4Vz5vANxrAIhxDWIPeBzDvpu94v88HrDkp62aRBeOFeNzt5ux+itunS5Fwn2YxO30gMLuPMXFLnITDyA3fhoAkYUPrEM8cA4iY05FJH4K9u53K65ZtRNFy1mP9QCg/R8wKYghBlhgPMKBE2hcMxnegKAdpfG8TL8IUGvgXwmEEnE/yHv5xBqEgzdxt4wjpPqKFLLFH2h4J7LOkxDJOh1XLv/YoyfyzmbiLxleC6X+p9HW75WrPiGdegIBpQ6Atn6F/xkrv0ZkEbqQdQnv5wBqFezKhyF/0gh1LvmNu8YcUmL0Y9gmV9abzua9OhFa/QEaNpzAFZD/ilW8JgF2D5j9dAVmrXgOUFMZ/zu8S38PKvQA5o+biNvHFqIHXZkDkJTSXFXJoOt5zaF71op3GK7vdOJ5Ej6jp53oEd6z7k27KR51qfXDWd4OUbQ+MRm7hOcO4qGTBqwcWDygKyZ4imkIdQ0qbCcAT2bwKqNRLCRwPqfRlrNnvx/KmYHI0dVM850vG5jP4dSEoyT8S3hf/nw5EhZlT+6eKSQg9RWviaL4mSqW0d56RuEiFpJR5iXWtY1hAA3uVsXfSHmFXtwPEA1+TwKYf/w+NOzzvbB2V2HGa7tl84jJm1I0cvzTi2mchg0lB0AuAZrG5QwOgFJLm9yNixy9nvV8wnyAwof070ArniUFBqAHXZkHEG9LUKZX7NVt5fekDRWqQhUk7aQHlJJpiEL9K8Gopm/aVYVcKLhNZ6iXUoP8xG5jrptUkqfZwybT1MewKtbXJsu5x8zV61FMYNUSVXqDrE1vIaBsMVSZwjGj/py39M43/JeTiXlwtIxujFpH8PY1+jjf3+9kGGnkipYL8N5I0ocB1re8cLV9EMARAYhDQ6aRHrn5G+Ws7Hc9ilYsxBUrm66zeSadkpp5ANFKUxO+d3XS8Eip6yLeoVP6tLr5mgsHHdVccv00LfLUJ6WN6QqMHCnTkrSpPjE5OviRtt+V3o+FCujFyTRTnk156cGlswCU8kdaF98EINPABCyVfgRlhqST8hK0CYbhEoC2BKAyTaqG7e7waE3fWqm3phl0dorV2RVkLP+43eMbL61ulZtDeqpdwww37TRKmFgfsMpKrUUCcFRqk4LZ0jildjam6kGksXPR9FZKDpLSOWWno/YkWgsv0JNETcqiRPGg8hl3bf/JYIe7QLX0iq1rQIUEtue3djrWgqhqD9tEyR+vTo4Klj8qNFWjpaQTEM8cahNvdFpAwyeCsLCXBJr2OvXOLltks5dPpUYdgstx/VHFS2h4W2NBe2BumNCj4nvYGN3wLlpx94q7I2DzqUTzPaSIp5s1OAXlpAeBCknvKR5s/PR5NEQWQLMnzK1RaOrSzcrQoJT269Sc5lhBWWjXT9c6QIJ4UK4sNLrcT0nyjVzrQ3kOlCYPc/hOFsSiwyoo922PpF1ZePvrII1vo7lLa/+gUWM7LP2Bn1XJGkumdgFY1nHQlNJPqH8P5/iUNSYAABAASURBVObDUj4AtWpad/VLdXks8wCilDSoyG3BtnwDbVZtOgtLpkj+3bm0ijPi0IehraF8NnYKJ5HoN6ALqZPRBs7SyfpVEGHbbpCajEbFmFNGGsY/PXAn09I8VKouFeA5gpStn8lygyT4dI0UX5KSzq5aB6jXIJfGkcgPcNEskXRey2I+AKXfQDzsb7kmQjxnwlo/tz7O+/GWH6l/Ly624J/n8IEVKO//MeRKuFJWQMKOQ5+OhRO+L+RGPhDnVjAO9ejyHgVfNqE/L0e33fiS3VZ3Oyt2pYeVHseGw2E8HZfBFfJeYkiSGpBbPW95c+cIaTZ7vjMgJ+OMeE4+RZk74WxofRbjcXqwD0zfeC6nVpBLj0Qivo+EvB5bPlPxIrxlK5mqybqAERp0S4agVTKvDkE7ISlUz2uvU0gBVg4I6yV727Ja303iTso9lD34pSielORJasotPH4E35GHjighEOfW/jXHa+T/LnrlZYF+EHe3flLvjCNVPvd/D2FwHPl/Bm3djuIl/lpm9sqNpP2JaeJGkPdvMHf8cZBPYYQiz7kTTgE0t6KVP61TOgQn35LknuZ7pFBplSTfKckPk2BJrycGa9EADoXQJK1uoRgICo4cPm1vbCz5uvfdUGq4jwdlK/EDL1ljMhz3Scwb/2vPy+csljuZjTyX6TKf5wP7eb/uE0NL8RCqsqS31AyOIlgfYvl7kRtajEDNmZAeVoBiRUfDArdBmQsYCTfnkLQyy/mBfJqhcKCXE8iBsr7lfS91zxFB7yNDAbJFGiBfEki2/b0eXuoRwxOK+KoxK6FwLYOl0GoqcqM3Qr4/IwGaKfN51uEE5kKrEdC4ElXHLpekWh9JPAaoBQBqmHs61pfNgNQBXvJet008mKBYyLLsQNxLMIuHuEzynCIV8bsA9WcQBfRHksefkLfrScwddw9yy/7MEesy+huh3OQ2sBpJHX3LO8Np+D0ZGXSns7qz8jbV7eSdQX3LqfRElvvI95ph/SASuVMY3+0cAYjFebiS+XgWXOtOWNHrcPdYv8eVv32r1K/YcDKtSLDgWPpr6S+jL4GyirhFKaffmxmXrcwRUMG7aWhX4YZJMoKRTBd0Huedp9+Qv6UrPSpldD9BOPg4st/YC4H4HTSCW6FRxXwic4KGdRtp99WTuXhsAFWBX7K3vZf5vk4veb9guWkI2vehbMB3UTrocCSc+wB9KdNlCiN59maZ38GuuR855f5BHxNRzHOVvQv/AKUuApQY4c8Qd18kgB/E/PH3QduPUoYCaOtcVI152MuPOlcxDx4jsZug1SXQYF26GMHYCyx/L3JfeYi6uQ9KbYWtz8SsVS/UKekHZ63ZAh37GSO30XPKh1xo9UOW+RHld+Dal6PymFdJK4XCFwCifI+bYbOdpDMjoac4q6cI0qIccfd5JOxLEHRPQTzwb56XcML+BRL62Xrl9x68C3biQgTUsYA6AZa6GBbuxODB/uITvGYufxkB91Q22CQ20nmQDx01foBI/GJcuXwjKgZ8Adv5d3i/mVYT4ejpsNQfgCOiSF3TV20F1M9oaOOg1MmAexzB8SvvlLw6bxsS1vWw3KmUdSy9yDwWAesC5r8cVuI5pK7r1zgI2Pezjosh35el3i9gCfCvgM5+D5ZeC2XNgNBS6ZLX0T9nmVnQ4fpfFMhp/szlyxB3JkFGSaXvp4z/on+dcs6kDOd4n+YUE0xIcxWviWLW8vsRtCbCwrk04CVQ+AzQqynLzxG2/xNXrvxHmpI+adaaLdin8FewqH+lTmS5U71wIH4BZr/wsQ9KdR0s5xjq5ji+13mevlTVRp+Bf+/uu9XdArS6fvm2SX5EJEYp82TxEhaapNVlJMYxY/VXuOLFzSjiia8YvHih180n5eW/Ls1c8RhmLv8T5LMVMQzJI3Nq4SHlxV+1coMHnIYGVbQ84k0xZi5f4X1zJKfjqfIim/AQWVPel+lzzFyz+xBN0YSFLnVIXQ3zyvdLUk/R8s+9d0qlS14pM2vFOu8bJ6m3oRfdzFqxHEUr7+A73kT/exSteo16iTTMmjYucl254mnMWjkfM1fcgqKVD3jASL1n2kJJouhb9C6dUdHKZ6m/V3HFmtJkKijDNqT0I/V4+mri05baQl0bsLq2OlOb0UBmacAAJLPay0jbxRowAOlihZvqMksDGQOQs88++5v0E6heRd8hbsqUKYeeO2XK+HTMiouLrbPOOuuHzLNfuvRMoJ1zzjknUP7RDWU977zz+p8zZcrkSZPSnI80zNyO+LnnnnsY2+o7UnTy5MkDpS7KkS1xPr/NtIuELvFu9K2qOmMAYllWFt+oH31HumwNpOW5du1aAaKkhTqywo7iRUMbQMP7KZ95TfJ0nIKk3sC8ZxIwh0terbXtKtVfKSXnSULqUO8mEv8G1z1BmGZlZQWkrmg0qihrP0upa5XW+YFAICHpPd1nDEDy8/M/rKqSv+MKfeGFF2ZNnTo1d+rkyUPES2+fUrSknX/66SOFzgbxDIDPbMnP5zD2boOYV4yfD7wTiUafk4D0ppInWW7wwQcfrKurq/+8ffv2T5muTj311HyWz6MfQV/PKBnvRz9CyvNZL41luaNZbAlfGugopns9qdDr+Hr8pa5UmsiVKiPvef755xcwTeQfTMM7Oei6Q4R+0kknhaV+eT/6oSxjO8AL/fr1e3/s2LFipGNd1z1MwgcccEAJQfLE008/XUlekLz09XTz05/+NEha7btImN7rLPi06YfxffaSeoVHU551bQ+Hw48/88wzVQTrUOYLOVo/s2TJknKGpe4Bwkfqk3hP8xkDkNLS0u/nZGVdLgokUE6tqal5JB4M3hQLBu/58MMP/0Po0mjVVVW3OoHADaTPIzrOFDqfZ8dqah5iA93kOM7vOcSn6ONzs7PlcBC5WVnnCk+Wu5m93HyOIF9j2pVDhw49nKALZ2dlzWP5u5h2C/3vyOObwpt1HkH6PfQ3sY57baVmi8FKWsp/tHbtOeS7ULvuDSx753lnnPG1VJo8ySOL7zaXPO5m+ZsZvof85eARlOEi9vSnST7KNCSRSNxMsA1m3mMVMJrvevG7777bv6Cg4LhYNLpIO84truPcwfyHktfPKnbtOpbv8DXmlR9CnT5kyJCjhQ/L30Cw5V/IzoZGUMS8C1nuLo4057Isdu3adTjpMxhmUSiGf2nb9pGU1WbZy5j/Nr7PTQV5eTNJSwd6FgU++uijEdTLDR7o/VHlIKXUNIJ4COs6mXx+Qz63sn2vIZ9aQHqFe8CN790DpGiFCFRqAZTyPh7kED2E8Ziy7WtcrRdwOJ9ChQ9iwx1LVnlV0ej0UDxe5AAvMQ72tMOhtWL6VSz3O+Y/X3pbpvXTSg3nExoYRkuoYbn/shOJ6zgl2ET6KObPjUQiiuli1Curo9FLGV5PGc5mOsjzQoZfZe98Gcv/i/wknyTVem1Z71HOa6qqqy+FUrto1DxUrE0GpyEWecpa52X2rpcy5UP28BfwCfIbQv7eV7M00CC03oc0mzKuZvoHrPe3Tz311E7tf1kbIv3XrGs2ea5zgb0cTqUef/zxT8j/73yXJ3i9HHScMPmMYnnURCLHkn446y2ibPNcpc5mjz6KdeXw5UZIHs9T98pxckkfxbLHU4YbA8HgdLaBfEngf4flZax/o1wh6sWry3Z5mg98QJp8KybvdgHr+I0dCExnnpHUpawx6zPo5ljGAET0xEamA9tRaRrNPx577LEdAN4noZJKz6OxrGOGgTSOq2KBwLmc5w5hOviSLhv0Vckfi8XeYv6EG4n0pzEwu+QASUqz4d9+5Kmntj26dOn6I47YfWJOsNCGVImVSLzFaUkFgLdZsJ9MLyjHQBrXK5wyVNIg/0Ye8lkJs+x2bHhNGSZzNJgG1/06y+TsTk2GtI6wkreED9PfZH5Z/yQT/Ycdi7FaP8w8EuGAkvAO/Cx2ADS2dxctXfoleWx45JFHIjQ6umR+IM7Q7i8JGKmoqGApJSPhByzz1datW99jgZ0cZUdSl3wdZmrgOHrvpLJ2kjw9Ho//jPm+wWkoi5HSgotbVg1fQNYeMrUbykIjqY8TWJ/MAPqxDaWTaIFL1yazHdpRYQ8owtajrncLQuXabOR3+JxOg5TelXp3ik877bRCycUXDciToJHe2nJCIbIQiu8ZIYYIEj/a+E7GCUuK+kmsXOfl5YmBafaqYaHSSMNsdFYlMd/LjhGnLteSXkIDXkMvaxo/se5d1avboTCsAiAQGFQez5htWwSgqrFtLw0NLorI12hAbCmqvT88wVkoMHjwYKnH5uXxYd0BTnssThkV5bdcy1LSQRAUVyqlnuD7rif9cpY7qqVqGqYT2RRXVzhav860V5RlzQ0lEo8y3KOcKKRHCdScMGwMuvQ52GguG/O7lmUdyRyf8MU+ZgNbwWCQQYAWNZHTsMPYsJPIJFFWVraTDcwgc9MxU22Y0caOBesSmVkRkDHWsY4tfS6nJd9jzzqF1iy7bbVZmRZi3TmwbfnGaBcNfCitj9XVZvEDhJof8O/kyyoY1voL8jya7zaa7zaBYnijohsOR5mHe0QB2U718pKp92SpRo4J1eytD0l1GJRJcfFsedM/4HCRn/xPIj0/WFPzOeXeyvDeAeA4riPGMHwEaS51OJQy/NCKx7dIWVYk36Z5i3eGPUd5K6iLb1LmYUJgWVYvId9LJ8XQBlhWOZEp0zjZNPgGgV9Pd8zT7Y467XYZWiUAAbCZSv+HZKaB/YuN9LGEo9FonNp/LSuRiFDxERrg0dp1r+P06TQ21H/TiEX5LIIS9uTT+MJj2Fvd8fzzz9eI0SrX9T/y0/pDF/B4Cl/2mjRZ9RaHoW3s7bicwevsWSskzbKsL2mc70o4kEjcQ8PZ5bruVBrCLtK9KY+kiee0bhtlfQiSrvWVpJUQmGv5rHXkKyPGq6zL/04pENhK2d+SDNF4fBn5f8jF/WzG9yX9BYK+hnx30MAWsVc/URbtfJcvKP/7zFPrKMu7IqsQlG0vpv4GERTfrda6kmmvcSqaoNxvMn0xdTaNujuJ4TtkmsldvHXM/yD5X8g8k/luL/E9tnBnr4ZlR7q2XcTnFaSvyM3NfYPlah1HguWMlND4x7P+Smkf1itTq2qWeY20GNuljHznEWTfZ95r+Y7yxx7qTQFJ73ZHe+l2GVolABX69kEHHfSQZOZCczkXnk9LWLYPDxw9+jfSqDSatQeNHj2Li9TL+xUWTme+lZKHDWuxsVcLvaCw8GeLFy9+Veh8/u3Agw9+2AsvWbKM+f8i4aTXrO8PrPdDARPDdzK/LNzB599ZThanYK9XmpOTcwvLXso6/kGDKSe43CQPeWjKurSsouIX2dnZRY8/8cSMxUuWPCMJKf/ggw9GR48efTvr+kJofI/3Wd/9El62bFkp027MzsmZRtp19Dc8+uijuySNfBfTyGbx3bdTpteYTz6/lyTPi4ykyyf9IM+1fP8fAPEBAAADb0lEQVQrWH6lLOoPOvjgOx7hOoV1OpT9sfKKip9TZ5cx/LIUlncg/0Xl5eUXFxYWziZ9FuNrRZ7HlyyZk5WTcznfSfL/QeSXMin/x6VLN7Mdrmav8ijr3Xog24f1VNOXSL2LFi0ql7yMv8V1zxV8h19Q9hsZ3yL0nuStniRMC7JoabRkHtqhzJr8WB26nDm4VHT173//e1mUehnYO8U5UiRId+rSmdgkT6Z5vPiUulJhRj1XW4694djq6urfnHPWWTeynkkESerXdF7G1E1AljQk4Sc+leQ9k++Qotfyl0RJk7LyFC+0lJd3YljK1StDWkpmSZMoJG+qfOrpJfAm8jXQDalAHbrwES90LfJImkTSeeEv9UmahOUpvm5Y4mvWrJF2qW5Il7Se4HscQDpDKZxeLOEUpO7o0GHVcFdHph4PgYtNjlRF7GVf7zDmhlG3a6BPAGTx4sUb6b3pUUdrXKZ45P0qp03PEhzpd6g6ulLDr8s00CcA0mXaNBX1Og0YgPS6JjUv1JEaMADpSG0aXr1OA30JIL2u8cwLdb4GDEA6X8emhgzWgAFIBjeeEb3zNWAA0vk6NjVksAYMQDK48Yzona8BA5AO0bFh0ls1YADSW1vWvFeHaMAApEPUaJj0Vg0YgPTWljXv1SEaMADpEDUaJr1VAwYgPb1ljXzdqgEDkG5Vv6m8p2vAAKSnt5CRr1s1YADSreo3lfd0DRiA9PQWMvJ1qwYMQLpV/d1buam9ZQ0YgLSsI5OjD2vAAKQPN7559ZY1YADSso5Mjj6sAQOQPtz45tVb1oABSMs6MjnaroFeU8IApNc0pXmRztCAAUhnaNXw7DUaMADpNU1pXqQzNGAA0hlaNTx7jQYMQHpNU/aVF+na9zQA6Vp9m9oyTAMGIBnWYEbcrtWAAUjX6tvUlmEaMADJsAYz4natBgxAulbfpraerIE0shmApFGKIRkNpDRgAJLShHkaDaTRgAFIGqUYktFASgMGIClNmKfRQBoNGICkUYohGQ2kNNBRAEnxM0+jgV6lAQOQXtWc5mU6WgMGIB2tUcOvV2nAAKRXNad5mY7WgAFIR2vU8OtVGsgAgPQqfZuXyTANGIBkWIMZcbtWAwYgXatvU1uGacAAJMMazIjbtRowAOlafZvaMkwDfRsgGdZYRtyu18D/BwAA///g0qQJAAAABklEQVQDALXNeJViOkTgAAAAAElFTkSuQmCC";
+  
+  for (let i = 0; i < 70; i++) {
+    const img = document.createElement("img");
+    img.src = logoUrl;
+    img.className = "nutri-rain";
+    // Fallback if clearbit fails
+    img.onerror = () => { img.src = "https://upload.wikimedia.org/wikipedia/id/4/4e/Nutrifood_logo.png"; };
+    img.style.left = Math.random() * 100 + "vw";
+    img.style.width = (Math.random() * 70 + 50) + "px"; // 50px to 120px for depth
+    img.style.animationDuration = (Math.random() * 4 + 3) + "s"; // 3s to 7s (faster fall)
+    img.style.animationDelay = "-" + (Math.random() * 15) + "s";
+    rainContainer.appendChild(img);
+  }
+}
+
+initNutrifoodRain();
+</script>
+<footer style="text-align: center; padding: 30px 20px 20px; font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 20px; font-family: var(--font-body); letter-spacing: 0.5px; opacity: 0.8;">
+  PROVIDE APPS BY FENDI AKHMAD,S.Pd @2026 SMP NEGERI BANYUBIRU
+</footer>
+</body>
+</html>
+
